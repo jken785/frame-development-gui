@@ -1,4 +1,4 @@
 from django.shortcuts import render
 
-def homePage(request):
-    return render(request, 'sim/homePage.html')
+def login(request):
+    return render(request, 'sim/login.html')
