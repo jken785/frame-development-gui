@@ -1,34 +1,30 @@
 <!DOCTYPE html>
+
 <html>
   <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'style.css' %}"/>
     <title>Frame WebSim</title>
   </head>
   <body>
 
-  <h1>Login to Team Account</h1>
+  <header class="container">
+    <div class="header-grid" id="logo"><h1>FrameWebSim</h1></div>
+    <div class="header-grid">
+      <a href="/create"><h2>Create Model</h2></a>
+      <a href="/load"><h2>Load Model</h2></a>
+      <a href="/logout"><h2>Logout</h2></a>
+    </div>
+  </header>
 
-  <div class="container">
+  <div class="main-container">
     {% block content %}
 
     {% endblock %}
   </div>
-
-  <style>
-
-    body {
-      width: 750px;
-      margin: auto auto;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    h1 {
-      text-align: center;
-    }
-
-  </style>
 
   </body>
 </html>
