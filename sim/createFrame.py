@@ -1,6 +1,6 @@
-from tubeSizes import *
-from frame import *
-from createBaseFrame import *
+from sim.tubeSizes import *
+from sim.frame import *
+from sim.createBaseFrame import *
 
 def createFrame():
 

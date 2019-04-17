@@ -1,0 +1,50 @@
+<p>&#8212;<span class="caps">PARAMETERS</span>&#8212;</p>
+
+	<p>Number of Generations: 1<br />
+Number of Surviving Seeds Per Generation: 2<br />
+Number of Children Per Seed Per Generation: 20</p>
+
+	<p>You have elected to analyze 40 frames<br />
+across 1 generations (i.e. 40 per generation)</p>
+
+	<p>Maximum number of mutated tubes per individual: 2<br />
+Maximum number of mutated nodes per individual: 1</p>
+
+	<p>Maximum displacement allowed for any target node: 0.31000 inches<br />
+Maximum average displacement allowed for all target nodes: 0.27100 inches<br />
+Maximum weight allowed: 59.510 pounds</p>
+
+	<p>Frame mass is weighted at 0.007500 in the objective function</p>
+
+	<p>Using createBaseFrame() to construct the initial seeds</p>
+
+	<p>Base Frame Weight: 59.502<br />
+Base Frame Score: 20.302<br />
+Base Frame Avg. Disp.: 0.27099<br />
+Base Frame Max Disp of A Target Node: 0.30064</p>
+
+	<p>&#8212;<span class="caps">START</span>&#8212;</p>
+
+
+	<p>Generation No. 1<br />
+Max Score Per Weight:		20.759<br />
+Avg Disp. of Target Nodes:	0.25970<br />
+Total Weight:			59.412</p>
+
+	<p>&#8212;<span class="caps">FINISHED</span>&#8212;</p>
+
+	<p>&#8212;<span class="caps">STATS</span>&#8212;</p>
+
+	<p>Minutes taken for simulation to complete: 0.3<br />
+That&#8217;s 2.18 frames per second!</p>
+
+	<p>Total Number of Frames Analyzed: 40</p>
+
+	<p>The best frame&#8217;s score was 0.457<br />
+better than the original seed frame</p>
+
+	<p>The weight of the best frame was<br />
+0.09 pounds less than the original seed frame</p>
+
+	<p>The avg. displacement of all target nodes for the best frame was<br />
+0.01129 inches less than the original seed frame</p>

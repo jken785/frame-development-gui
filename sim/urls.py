@@ -1,8 +1,10 @@
-from django.urls import path, include
 from django.conf.urls import url
+from django.urls import path, include
 from . import views
-from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    url(r'^', views.main),
+    url(r'^$', views.main),
+    url(r'^load/$', views.load),
+    path('load/<int:id>/', views.loaded),
+    path('run/<int:id>/', views.run),
 ]

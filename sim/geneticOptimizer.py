@@ -1,19 +1,21 @@
 from mpld3 import *
 
+from sim.createFrame import *
+from sim.createBaseFrame import *
+import copy
+import matplotlib.pyplot as plt
+import time
+from sim.loadCases import *
+import os
+import datetime
+from django.shortcuts import render, redirect
+from sim.models import *
+from django.views.decorators.csrf import csrf_exempt
 
-for i in range(0,10):
+
+def geneticOptimizer(numGenerations, numSeeds, numChildrenPerSeed, maxNumRandNodes, maxNumRandTubes, weightMultiplier, maxDispOfAnyTargetNode, maxAvgDisp, maxWeight):
     # Important Sim Parameters
     # ----------------------------
-    numGenerations = 50
-    numSeeds = 2
-    numChildrenPerSeed = 20
-    maxNumRandNodes = 1
-    maxNumRandTubes = 2
-
-    weightMultiplier = .0025*i
-    maxDispOfAnyTargetNode = 0.31
-    maxAvgDisp = 0.271
-    maxWeight = 59.51
 
     useOriginalBaseFrame = True
     # ----------------------------
@@ -25,22 +27,13 @@ for i in range(0,10):
     plotCurrentFrame = False
     # ----------------------------
 
-    from createFrame import *
-    from createBaseFrame import *
-    import copy
-    import matplotlib.pyplot as plt
-    import time
-    from loadCases import *
-    import os
-    import datetime
-
     currentDateTime = datetime.datetime.now()
     workingDir = os.getcwd()
-    path = "%s\\results" % workingDir
+    path = "%s\\media" % workingDir
     if os.path.isdir(path) is False:
         os.mkdir(path)
     timestamp = currentDateTime.strftime("%Y-%m-%d %Hh %Mm %Ss")
-    simFolderPath = "%s\\results\\%s" % (workingDir, timestamp)
+    simFolderPath = "%s\\media\\%s" % (workingDir, timestamp)
     os.mkdir(simFolderPath)
     consOutPath = "%s\\consoleOuput.txt" % simFolderPath
     consoleOutput = open(consOutPath, "w")

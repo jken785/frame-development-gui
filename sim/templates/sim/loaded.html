@@ -1,0 +1,37 @@
+{% extends 'sim/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="center">
+    <h3 class="normal">From here you can edit the model or run a simulation:</h3>
+    <form action="/sim/editLoads/{{ id }}/">
+        <input type="submit" value="Edit Loadcases"/>
+    </form>
+    <form action="/sim/editModel/{{ id }}/">
+        <input type="submit" value="Edit Model"/>
+    </form>
+
+    <form action="/sim/run/{{ id }}/" method="POST">
+        Number of Generations: <input type="number" name="numGens"/><br>
+        Number of Surviving Individuals: <input type="number" name="numSeeds"/><br>
+        Number of Children per Surviving Individual: <input type="number" name="numChildrenPerSeed"/><br>
+        <hr>
+        Weight Multiplier: <input type="number" step="any" placeholder="Higher makes heavier frames less favorable"
+                                  name="weightMultiplier"/><br>
+        <hr>
+        Max Number of Tube Mutations per Individual: <input type="number" name="maxNumRandTubes"/><br>
+        Max Number of Node Mutations per Individual: <input type="number" name="maxNumRandNodes"/><br>
+        <hr>
+
+
+        Maximum Displacement of Any Targetted Node: <input type="number" step="any" name="maxDispOfAnyTargetNode"/><br>
+        Maximum Average Displacement of Target Nodes: <input type="number" step="any" name="maxAvgDisp"/><br>
+        Maximum Acceptable Frame Weight: <input type="number" step="any" name="maxWeight"/><br>
+
+
+        <input type="submit" value="Run"/>
+    </form>
+</div>
+
+
+{% endblock %}

@@ -1,8 +1,8 @@
-from tube import *
+from sim.tube import *
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-from tubeSizes import *
+from sim.tubeSizes import *
 from mpld3 import *
 
 def plotFrameAni(frame, axes, title):

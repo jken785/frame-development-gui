@@ -1,4 +1,4 @@
-from loadCases import *
+from sim.loadCases import *
 import math
 
 def ObjectiveFunction(frame, currLoadCase, weightMultiplier):

@@ -1,0 +1,14 @@
+{% extends 'sim/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="center">
+    <h3 class="normal">Available Models:</h3>
+    {% for model in models %}
+
+    <p><a href="/sim/load/{{ model.id }}">{{ model.name }}</a></p>
+    <div>
+        {% endfor %}
+
+
+        {% endblock %}

@@ -1,10 +1,10 @@
 import random
-from node import *
-import generateMatrices
-from solver import *
-from generateMatrices import *
-from objectiveFunction import *
-from plotter import *
+from sim.node import *
+import sim.generateMatrices
+from sim.solver import *
+from sim.generateMatrices import *
+from sim.objectiveFunction import *
+from sim.plotter import *
 
 class Frame:
 

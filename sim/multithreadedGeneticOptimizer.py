@@ -25,12 +25,12 @@ graphUpdatePeriod = 1
 
 
 
-from createFrame import *
-from createBaseFrame import *
+from sim.createFrame import *
+from sim.createBaseFrame import *
 import copy
 import matplotlib.pyplot as plt
 import time
-from loadCases import *
+from sim.loadCases import *
 import os
 import datetime
 import multiprocessing as mp
@@ -66,11 +66,11 @@ def generateAndSolveIndividuals(queue, seeds):
 if __name__ == "__main__":
     currentDateTime = datetime.datetime.now()
     workingDir = os.getcwd()
-    path = "%s\\results" % workingDir
+    path = "%s\\media" % workingDir
     if os.path.isdir(path) is False:
         os.mkdir(path)
     timestamp = currentDateTime.strftime("%Y-%m-%d %Hh %Mm %Ss")
-    simFolderPath = "%s\\results\\%s" % (workingDir, timestamp)
+    simFolderPath = "%s\\media\\%s" % (workingDir, timestamp)
     os.mkdir(simFolderPath)
     consOutPath = "%s\\consoleOuput.txt" % simFolderPath
     consoleOutput = open(consOutPath, "w")

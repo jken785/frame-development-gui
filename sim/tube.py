@@ -1,5 +1,5 @@
 import math
-import tubeSizes
+import sim.tubeSizes
 
 
 class Tube:
@@ -38,9 +38,9 @@ class Tube:
         return length
 
     def getWeight(self, length):
-        if self.size is not tubeSizes.RD_1xSLD:
+        if self.size is not sim.tubeSizes.RD_1xSLD:
             volume = length * self.size.A
-            density = tubeSizes.density
+            density = sim.tubeSizes.density
             return volume*density
         else:
             return 0
