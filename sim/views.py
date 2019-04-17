@@ -29,16 +29,18 @@ def loaded(request, id):
 
 @csrf_exempt #You need to get rid of this eventually
 def run(request, id):
-    print(request.POST)
-    numGens = int(request.POST.get('numGens'))
-    numSeeds = int(request.POST.get('numSeeds'))
-    numChildrenPerSeed = int(request.POST.get('numChildrenPerSeed'))
-    maxNumRandNodes = int(request.POST.get('maxNumRandNodes'))
-    maxNumRandTubes = int(request.POST.get('maxNumRandTubes'))
-    weightMultiplier = float(request.POST.get('weightMultiplier'))
-    maxDispOfAnyTargetNode = float(request.POST.get('maxDispOfAnyTargetNode'))
-    maxAvgDisp = float(request.POST.get('maxAvgDisp'))
-    maxWeight = float(request.POST.get('maxWeight'))
-    geneticOptimizer(numGens, numSeeds, numChildrenPerSeed, maxNumRandNodes, maxNumRandTubes, weightMultiplier, maxDispOfAnyTargetNode, maxAvgDisp, maxWeight)
 
-    return render(request, 'sim/run.html')
+    sim = Sim.objects.get(pk=id)
+    sim.numGens = int(request.POST.get('numGens'))
+    sim.numSeeds = int(request.POST.get('numSeeds'))
+    sim.numChildrenPerSeed = int(request.POST.get('numChildrenPerSeed'))
+    sim.maxNumRandNodes = int(request.POST.get('maxNumRandNodes'))
+    sim.maxNumRandTubes = int(request.POST.get('maxNumRandTubes'))
+    sim.weightMultiplier = float(request.POST.get('weightMultiplier'))
+    sim.maxDispOfAnyTargetNode = float(request.POST.get('maxDispOfAnyTargetNode'))
+    sim.maxAvgDisp = float(request.POST.get('maxAvgDisp'))
+    sim.maxWeight = float(request.POST.get('maxWeight'))
+    sim.save()
+
+    args = { 'id': id }
+    return render(request, 'sim/run.html', args)

@@ -3,17 +3,27 @@ from mpld3 import *
 from sim.createFrame import *
 from sim.createBaseFrame import *
 import copy
-import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
+from matplotlib import pyplot as plt
 import time
 from sim.loadCases import *
 import os
 import datetime
+import textile
 from django.shortcuts import render, redirect
 from sim.models import *
 from django.views.decorators.csrf import csrf_exempt
+from asgiref.sync import async_to_sync
+from channels.generic.websocket import WebsocketConsumer
+import json
 
+webPrintOut = ""
+timeLeft = ""
 
-def geneticOptimizer(numGenerations, numSeeds, numChildrenPerSeed, maxNumRandNodes, maxNumRandTubes, weightMultiplier, maxDispOfAnyTargetNode, maxAvgDisp, maxWeight):
+def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRandNodes, maxNumRandTubes, weightMultiplier, maxDispOfAnyTargetNode, maxAvgDisp, maxWeight):
+    global webPrintOut
+    global timeLeft
     # Important Sim Parameters
     # ----------------------------
 
@@ -23,8 +33,6 @@ def geneticOptimizer(numGenerations, numSeeds, numChildrenPerSeed, maxNumRandNod
     # Plotting parameters
     # ----------------------------
     finalDisplacementScaling = 15
-    graphUpdatePeriod = 1
-    plotCurrentFrame = False
     # ----------------------------
 
     currentDateTime = datetime.datetime.now()
@@ -38,10 +46,15 @@ def geneticOptimizer(numGenerations, numSeeds, numChildrenPerSeed, maxNumRandNod
     consOutPath = "%s\\consoleOuput.txt" % simFolderPath
     consoleOutput = open(consOutPath, "w")
 
+    def timeRemaining(left):
+        global timeLeft
+        timeLeft = '%.1f' % left;
+
     def printOut(line):
-        print(line)
         consoleOutput.write(line)
         consoleOutput.write("\n")
+        global webPrintOut
+        webPrintOut += (line + "\n")
 
     printOut("--PARAMETERS--")
     printOut("\nNumber of Generations: %i" % numGenerations)
@@ -68,21 +81,19 @@ def geneticOptimizer(numGenerations, numSeeds, numChildrenPerSeed, maxNumRandNod
     start = time.time()
 
     # Set up graphs (change size of figure's window using the first line below)
-    fig = plt.figure(figsize=(10,7))
-    grid = plt.GridSpec(6, 4, hspace=0.8, wspace=0.2)
-    ax1 = fig.add_subplot(grid[0:2, :2], title="Score/Weight vs Generations")
+    fig = plt.figure(figsize=(6,7))
+    grid = plt.GridSpec(6, 1, hspace=0.8, wspace=0.2)
+    ax1 = fig.add_subplot(grid[0:2, :], title="Score/Weight vs Generations")
     ax1.set_ylabel('Objective Function Score')
-    ax2 = fig.add_subplot(grid[2:4, :2], title="Avg Displacement vs Generations")
+    ax2 = fig.add_subplot(grid[2:4, :], title="Avg Displacement vs Generations")
     ax2.set_ylabel('Inches')
-    ax3 = fig.add_subplot(grid[4:6, :2], title="Weight vs Generations")
+    ax3 = fig.add_subplot(grid[4:6, :], title="Weight vs Generations")
     ax3.set_ylabel('Pounds')
-    if plotCurrentFrame:
-        ax4 = fig.add_subplot(grid[3:6, 2:], projection='3d')
-        ax5 = fig.add_subplot(grid[0:3, 2:], projection='3d')
-        ax5.view_init(azim=-135, elev=35)
-    else:
-        ax4 = fig.add_subplot(grid[0:, 2:], title="Maximum Frame", projection='3d')
+
+    fig3D = plt.figure(figsize=(4,7))
+    ax4 = fig3D.add_subplot(1, 1, 1, title="Maximum Frame", projection='3d')
     ax4.view_init(azim=-135, elev=35)
+
     ax1.grid()
     ax2.grid()
     ax3.grid()
@@ -120,16 +131,28 @@ def geneticOptimizer(numGenerations, numSeeds, numChildrenPerSeed, maxNumRandNod
     ax2.plot(iterations, averageDisps)
     ax3.plot(iterations, weights)
     maxFrame.plotAni(ax4, "Maximum Frame")
-    if plotCurrentFrame:
-        maxFrame.plotAni(ax5, "Current Frame")
-    fig.suptitle("Starting in 3")
-    plt.pause(1)
-    fig.suptitle("Starting in 2")
-    plt.pause(1)
-    fig.suptitle("Starting in 1")
-    plt.pause(1)
-    fig.suptitle("Genetic Simulation - Geometry and Thickness")
-    plt.pause(.001)
+
+    # Sends live sim data to webpage
+    figHTML = fig_to_html(fig)
+    sp = figHTML.split('<script>')
+    div = sp[0].split('</style>')
+    figDiv = div[1]
+    script = sp[1].split('</script>')
+    figScript = script[0]
+
+    path = "%s\\sim\\static\\results\\%i" % (workingDir, int(ws.room_name))
+    if os.path.isdir(path) is False:
+        os.mkdir(path)
+    fig3DPath = path + "\\fig3D.png"
+    fig3D.savefig(fig3DPath)
+    webPrintOut = textile.textile(webPrintOut, html_type="xhtml")
+    ws.send(text_data=json.dumps({
+        'figDiv': figDiv,
+        'figScript': figScript,
+        'webPrintOut': webPrintOut,
+        'timeLeft': timeLeft
+    }))
+    webPrintOut = ""
 
     printOut("\n--START--")
 
@@ -153,9 +176,6 @@ def geneticOptimizer(numGenerations, numSeeds, numChildrenPerSeed, maxNumRandNod
                     for j in range(numRandNodes):
                         individual.randomizeLocationOfRandomNode()
                 individuals.append(individual)
-                if plotCurrentFrame:
-                    individual.plotAni(ax5, "Current Frame")
-                    plt.pause(0.000000000000001)
 
         # Solve generation individuals
         sortingList = []
@@ -192,12 +212,10 @@ def geneticOptimizer(numGenerations, numSeeds, numChildrenPerSeed, maxNumRandNod
         iterations.append(gen)
         weights.append(maxFrame.weight)
 
-        if gen % graphUpdatePeriod is 0:
-            ax1.plot(iterations, maxScoresPerWeight)
-            ax2.plot(iterations, averageDisps)
-            ax3.plot(iterations, weights)
-            maxFrame.plotAni(ax4, "Maximum Frame")
-            plt.pause(0.001)
+        ax1.plot(iterations, maxScoresPerWeight)
+        ax2.plot(iterations, averageDisps)
+        ax3.plot(iterations, weights)
+        maxFrame.plotAni(ax4, "Maximum Frame")
 
         if gen is 1:
             endOneGen = time.time()
@@ -208,8 +226,32 @@ def geneticOptimizer(numGenerations, numSeeds, numChildrenPerSeed, maxNumRandNod
         printOut("Max Score Per Weight:\t\t%.3f" % maxScorePerWeight)
         printOut("Avg Disp. of Target Nodes:\t%.5f" % averageDisp)
         printOut("Total Weight:\t\t\t%.3f" % maxFrame.weight)
-        timeRemaining = (minutesPerGen*numGenerations) - (minutesPerGen*(gen-1))
-        print("\n~%.1f minutes remaining..." % timeRemaining)
+        timeToGo = (minutesPerGen*numGenerations) - (minutesPerGen*(gen-1))
+        timeRemaining(timeToGo)
+        print("\n~%.1f minutes remaining..." % timeToGo)
+
+        # Sends live sim data to webpage
+        figHTML = fig_to_html(fig)
+        sp = figHTML.split('<script>')
+        div = sp[0].split('</style>')
+        figDiv = div[1]
+        script = sp[1].split('</script>')
+        figScript = script[0]
+
+        path = "%s\\sim\\static\\results\\%i" % (workingDir, int(ws.room_name))
+        if os.path.isdir(path) is False:
+            os.mkdir(path)
+        fig3DPath = path + "\\fig3D.png"
+        fig3D.savefig(fig3DPath)
+        webPrintOut = textile.textile(webPrintOut, html_type="xhtml")
+        ws.send(text_data=json.dumps({
+            'figDiv': figDiv,
+            'figScript': figScript,
+            'webPrintOut': webPrintOut,
+            'timeLeft': timeLeft
+        }))
+        webPrintOut = ""
+
 
     ax1.plot(iterations, maxScoresPerWeight)
     ax2.plot(iterations, averageDisps)

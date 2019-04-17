@@ -2,10 +2,57 @@
 {% load static %}
 
 {% block content %}
-<div class="center">
-    <h3 class="normal">sup mothafucka</h3>
-
+<!-- chat/templates/chat/room.html -->
+<div id="wrapper" class="grid-container">
+    <div id="plots" class="grid-item"></div>
+    <div id="plot3D" class="grid-item"></div>
+    <div class="grid-item">
+        <div>
+            <h2>
+            Time to completion:
+            ~ <span id="timeLeft"></span> minutes
+            </h2>
+        </div>
+        <div id="consoleOutput"></div>
+    </div>
 </div>
+
+<script>
+    var simID = {{ id }};
+
+    var simSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/sim/run/' + simID + '/');
+
+    simSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var figDiv = data['figDiv'];
+        document.getElementById('plots').innerHTML = figDiv;
+        scr = document.createElement('script');
+        scr.innerHTML = data['figScript'];
+        scr.id = "scr";
+        var wrapper = document.getElementById('wrapper');
+        if (wrapper.lastChild.id == 'scr') {
+            wrapper.removeChild(document.getElementById('scr'));
+        }
+        document.getElementById('wrapper').appendChild(scr);
+
+        var imgDiv = document.getElementById('plot3D');
+        if (imgDiv.hasChildNodes()) {
+            imgDiv.removeChild(imgDiv.firstChild);
+        }
+        var img = document.createElement('img');
+        img.src = "{% static '/results/1/fig3D.png' %}";
+        imgDiv.appendChild(img);
+
+        document.getElementById('consoleOutput').innerHTML = data['webPrintOut'];
+        document.getElementById('timeLeft').innerHTML = data['timeLeft'];
+    };
+
+    simSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+</script>
 
 
 {% endblock %}

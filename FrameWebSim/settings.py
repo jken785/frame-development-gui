@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'channels',
     'sim',
+    'chat',
     'userAuth',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
 ]
 
 LOGIN_REDIRECT_URL = 'home'
@@ -74,6 +76,15 @@ TEMPLATES = [
 ]
 
 ASGI_APPLICATION = 'FrameWebSim.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+
 
 WSGI_APPLICATION = 'FrameWebSim.wsgi.application'
 

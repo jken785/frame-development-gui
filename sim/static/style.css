@@ -31,6 +31,8 @@ header {
 .grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    width: 95%;
+    margin: auto auto;
 }
 
 .grid-item {
@@ -40,6 +42,7 @@ header {
     border-color: #333333;
     border-radius: 5px;
     margin: 10px;
+    max-width: 1fr;
 }
 
 .console-output {
