@@ -5,7 +5,30 @@ body {
 }
 
 h3 > a {
+    margin-left: 35px;
+}
+
+i#first {
     margin-left: 20px;
+}
+
+#plot2D {
+    margin-top: 30px;
+}
+
+#plot2D > div > svg {
+    display: block;
+    margin: auto auto;
+}
+
+.plot3DImage {
+    position: relative;
+    top: -150px;
+    z-index: -100;
+}
+
+#timeLeftDiv {
+    text-align: center;
 }
 
 header {
@@ -25,6 +48,33 @@ header {
 
 .center {
     margin: auto auto;
+}
+
+#output {
+    padding-left: 50px;
+    padding-right: 200px;
+}
+
+input[type=submit] {
+    border: none;
+    height: 25px;
+    background-color: #00e50a;
+    color: #333333;
+    border-radius: 5px;
+    font-size: 15px;
+    margin: 5px;
+}
+
+input[type=submit]:hover {
+    background-color: #333333;
+    color: #00e50a;
+}
+
+.width50 {
+    width: 50%;
+}
+
+.centerText {
     text-align: center;
 }
 
@@ -41,9 +91,14 @@ header {
 
 .sim-grid-container {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 95%;
     margin: auto auto;
+    height: 550px;
+}
+
+#plots {
+    margin-bottom: 50px;
 }
 
 .grid-item {
@@ -87,6 +142,8 @@ header {
 
 #simComplete {
     display: none;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
 #plot3D {

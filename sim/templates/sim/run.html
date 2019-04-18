@@ -3,9 +3,9 @@
 
 {% block content %}
 <!-- chat/templates/chat/room.html -->
-<div id="simComplete" class="center green-wrap">
+<div id="simComplete" class="center centerText green-wrap">
     <h2>Simulation Complete
-        <i class="fas fa-chevron-right"></i>
+        <i class="fas fa-chevron-right" id="first"></i>
         <i class="fas fa-chevron-right"></i>
         <i class="fas fa-chevron-right"></i>
     </h2>
@@ -19,18 +19,20 @@
 
 </div>
 <div id="wrapper" class="sim-grid-container">
-    <div id="plots" class="sim-grid-item"></div>
     <div id="plot3D" class="sim-grid-item"></div>
-    <div class="sim-grid-item">
-        <div class="blackout">
+    <div class="sim-grid-item" id="output">
+        <div class="blackout" id="timeLeftDiv">
             <h2>
-            Time to completion:<br>
-                <span class="green-wrap">~ <span id="timeLeft"></span> minutes</span>
+                Time to completion:
+                <span class="green-wrap" id="timeLeftWrapper">
+                    ~ <span id="timeLeft"></span> minutes
+                </span>
             </h2>
         </div>
         <div id="consoleOutput" class="blackout"></div>
     </div>
 </div>
+<div id="plots"></div>
 
 <script>
     var simID = {{ id }};
@@ -58,12 +60,14 @@
                 imgDiv.removeChild(imgDiv.firstChild);
             }
             var img = document.createElement('img');
+            img.className = "plot3DImage";
             img.src = "{% static '/results/1/fig3D.png' %}";
             imgDiv.appendChild(img);
 
             document.getElementById('consoleOutput').innerHTML = data['webPrintOut'];
             document.getElementById('timeLeft').innerHTML = data['timeLeft'];
         } else {
+            document.getElementById('timeLeftWrapper').innerHTML = "Complete";
             document.getElementById('finishButtons').style.display = 'flex';
             document.getElementById('simComplete').style.display = 'block';
         }

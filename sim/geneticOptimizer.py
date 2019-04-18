@@ -59,23 +59,27 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
         global webPrintOut
         webPrintOut += (line + "\n")
 
-    printOut("--PARAMETERS--")
-    printOut("\nNumber of Generations: %i" % numGenerations)
-    printOut("Number of Surviving Seeds Per Generation: %i" % numSeeds)
-    printOut("Number of Children Per Seed Per Generation: %i" % numChildrenPerSeed)
+    def printFile(line):
+        consoleOutput.write(line)
+        consoleOutput.write("\n")
+
+    printFile("--PARAMETERS--")
+    printFile("\nNumber of Generations: %i" % numGenerations)
+    printFile("Number of Surviving Seeds Per Generation: %i" % numSeeds)
+    printFile("Number of Children Per Seed Per Generation: %i" % numChildrenPerSeed)
     numFramesAnalyzed = numGenerations * numSeeds * numChildrenPerSeed
     printOut("\nYou have elected to analyze %i frames" % numFramesAnalyzed)
     printOut("across %i generations (i.e. %i per generation)" % (numGenerations, int(numFramesAnalyzed/numGenerations)))
-    printOut("\nMaximum number of mutated tubes per individual: %i" % maxNumRandTubes)
-    printOut("Maximum number of mutated nodes per individual: %i" % maxNumRandNodes)
-    printOut("\nMaximum displacement allowed for any target node: %.5f inches" % maxDispOfAnyTargetNode)
-    printOut("Maximum average displacement allowed for all target nodes: %.5f inches" % maxAvgDisp)
-    printOut("Maximum weight allowed: %.3f pounds" % maxWeight)
-    printOut("\nFrame mass is weighted at %f in the objective function" % weightMultiplier)
+    printFile("\nMaximum number of mutated tubes per individual: %i" % maxNumRandTubes)
+    printFile("Maximum number of mutated nodes per individual: %i" % maxNumRandNodes)
+    printFile("\nMaximum displacement allowed for any target node: %.5f inches" % maxDispOfAnyTargetNode)
+    printFile("Maximum average displacement allowed for all target nodes: %.5f inches" % maxAvgDisp)
+    printFile("Maximum weight allowed: %.3f pounds" % maxWeight)
+    printFile("\nFrame mass is weighted at %f in the objective function" % weightMultiplier)
     if useOriginalBaseFrame:
-        printOut("\nUsing createBaseFrame() to construct the initial seeds")
+        printFile("\nUsing createBaseFrame() to construct the initial seeds")
     else:
-        printOut("\nUsing createFrame() to construct the initial seeds")
+        printFile("\nUsing createFrame() to construct the initial seeds")
 
     def sortingKey(elem):
         return elem[0]
@@ -85,16 +89,16 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
 
     # Set up graphs (change size of figure's window using the first line below)
     plt.tight_layout()
-    fig = plt.figure(figsize=(6,7))
-    grid = plt.GridSpec(6, 1, hspace=1.2)
-    ax1 = fig.add_subplot(grid[0:2, :], title="Score/Weight vs Generations")
+    fig = plt.figure(figsize=(18,3), dpi=100)
+    grid = plt.GridSpec(1, 6, wspace=1)
+    ax1 = fig.add_subplot(grid[:, 0:2], title="Score/Weight vs Generations")
     ax1.set_ylabel('Objective Function Score')
-    ax2 = fig.add_subplot(grid[2:4, :], title="Avg Displacement vs Generations")
+    ax2 = fig.add_subplot(grid[:, 2:4], title="Avg Displacement vs Generations")
     ax2.set_ylabel('Inches')
-    ax3 = fig.add_subplot(grid[4:6, :], title="Weight vs Generations")
+    ax3 = fig.add_subplot(grid[:, 4:6], title="Weight vs Generations")
     ax3.set_ylabel('Pounds')
 
-    fig3D = plt.figure(figsize=(7,7))
+    fig3D = plt.figure(figsize=(9,7), dpi=100)
     ax4 = fig3D.add_subplot(1, 1, 1, projection='3d')
     ax4.view_init(azim=-135, elev=35)
 
@@ -107,6 +111,7 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
     ax4.xaxis._axinfo["grid"]['color'] = (1, 1, 1, 0)
     ax4.yaxis._axinfo["grid"]['color'] = (1, 1, 1, 0)
     ax4.zaxis._axinfo["grid"]['color'] = (1, 1, 1, 0)
+
 
     # Initialize variables
     maxScorePerWeight = 0
@@ -140,10 +145,10 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
     ax1.plot(iterations, maxScoresPerWeight)
     ax2.plot(iterations, averageDisps)
     ax3.plot(iterations, weights)
-    maxFrame.plotAni(ax4, "Maximum Frame")
+    maxFrame.plotAni(ax4)
 
     # Sends live sim data to webpage
-    figHTML = fig_to_html(fig)
+    figHTML = fig_to_html(fig, figid="plot2D")
     sp = figHTML.split('<script>')
     div = sp[0].split('</style>')
     figDiv = div[1]
@@ -154,7 +159,7 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
     if os.path.isdir(path) is False:
         os.mkdir(path)
     fig3DPath = path + "\\fig3D.png"
-    fig3D.savefig(fig3DPath)
+    fig3D.savefig(fig3DPath, pad_inches=0)
     webPrintOut = textile.textile(webPrintOut, html_type="xhtml")
     ws.send(text_data=json.dumps({
         'end': end,
@@ -165,7 +170,7 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
     }))
     webPrintOut = ""
 
-    printOut("\n--START--")
+    printFile("\n--START--")
 
     for gen in range(1, numGenerations+1):
         # Generate generation individuals
@@ -226,7 +231,7 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
         ax1.plot(iterations, maxScoresPerWeight)
         ax2.plot(iterations, averageDisps)
         ax3.plot(iterations, weights)
-        maxFrame.plotAni(ax4, "Maximum Frame")
+        maxFrame.plotAni(ax4)
 
         if gen is 1:
             endOneGen = time.time()
@@ -242,7 +247,7 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
         print("\n~%.1f minutes remaining..." % timeToGo)
 
         # Sends live sim data to webpage
-        figHTML = fig_to_html(fig)
+        figHTML = fig_to_html(fig, figid="plot2D")
         sp = figHTML.split('<script>')
         div = sp[0].split('</style>')
         figDiv = div[1]
@@ -254,7 +259,7 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
         if os.path.isdir(path) is False:
             os.mkdir(path)
         fig3DPath = path + "\\fig3D.png"
-        fig3D.savefig(fig3DPath)
+        fig3D.savefig(fig3DPath, pad_inches=0)
         webPrintOut = textile.textile(webPrintOut, html_type="xhtml")
         ws.send(text_data=json.dumps({
             'end': end,
@@ -269,7 +274,7 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
     ax1.plot(iterations, maxScoresPerWeight)
     ax2.plot(iterations, averageDisps)
     ax3.plot(iterations, weights)
-    maxFrame.plotAni(ax4, "Maximum Frame")
+    maxFrame.plotAni(ax4)
     maxFrame.toTextFile(simFolderPath)
 
     if not errorFlag:
@@ -291,7 +296,7 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
         # Plot graphs and frame/displacements
 
         figPath = '%s\\graph.png' % simFolderPath
-        fig.savefig(figPath)
+        fig.savefig(figPath, pad_inches=0)
         for loadCase in LoadCases.listLoadCases:
             maxFrame.setLoadCase(loadCase)
             figPath = '%s\\%s.png' % (simFolderPath, loadCase.name)
@@ -300,8 +305,10 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
         plt.close(fig)
 
         end = "true"
+        timeLeft = 0
         ws.send(text_data=json.dumps({
             'end': end,
+            'timeLeft': timeLeft
         }))
 
     consoleOutput.close()

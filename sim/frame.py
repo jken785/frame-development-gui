@@ -358,7 +358,7 @@ class Frame:
     def plot(self, displacedScaling, figPath=None):
         plotFrame(self, displacedScaling, figPath)
 
-    def plotAni(self, axes, title):
+    def plotAni(self, axes, title=None):
         plotFrameAni(self, axes, title)
 
     def toTextFile(self, path):

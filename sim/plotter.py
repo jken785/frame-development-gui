@@ -5,10 +5,11 @@ from mpl_toolkits.mplot3d import Axes3D
 from sim.tubeSizes import *
 from mpld3 import *
 
-def plotFrameAni(frame, axes, title):
+def plotFrameAni(frame, axes, title=None):
     axes.clear()
     axes.set_aspect('equal')
-    axes.set_title(title)
+    if title is not None:
+        axes.set_title(title)
     setEqualScaling(frame, axes)
 
     for tube in frame.tubes:
