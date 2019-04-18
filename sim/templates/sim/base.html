@@ -1,30 +1,32 @@
 <!DOCTYPE html>
 
 <html>
-  <head>
+<head>
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+          integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'style.css' %}"/>
     <title>Frame WebSim</title>
-  </head>
-  <body>
+</head>
+<body>
 
-  <header class="container">
+<header class="container">
     <div class="header-grid" id="logo"><a href="/sim"><h1>FrameWebSim</h1></a></div>
     <div class="header-grid">
-      <a href="/sim/create"><h2>Create Model</h2></a>
-      <a href="/sim/load"><h2>Load Model</h2></a>
-      <a href="/logout"><h2>Logout</h2></a>
+        <a href="/sim/create"><h2>Create Model</h2></a>
+        <a href="/sim/load"><h2>Load Model</h2></a>
+        <a href="/logout"><h2>Logout</h2></a>
     </div>
-  </header>
+</header>
 
-  <div class="main-container">
+<div class="main-container">
     {% block content %}
 
     {% endblock %}
-  </div>
+</div>
 
-  </body>
+</body>
 </html>

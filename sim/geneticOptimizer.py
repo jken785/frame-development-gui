@@ -21,6 +21,7 @@ import json
 webPrintOut = ""
 timeLeft = ""
 
+
 def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRandNodes, maxNumRandTubes, weightMultiplier, maxDispOfAnyTargetNode, maxAvgDisp, maxWeight):
     global webPrintOut
     global timeLeft
@@ -34,6 +35,8 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
     # ----------------------------
     finalDisplacementScaling = 15
     # ----------------------------
+
+    end = "false"
 
     currentDateTime = datetime.datetime.now()
     workingDir = os.getcwd()
@@ -91,7 +94,7 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
     ax3 = fig.add_subplot(grid[4:6, :], title="Weight vs Generations")
     ax3.set_ylabel('Pounds')
 
-    fig3D = plt.figure(figsize=(7,7), dpi=300)
+    fig3D = plt.figure(figsize=(7,7))
     ax4 = fig3D.add_subplot(1, 1, 1, projection='3d')
     ax4.view_init(azim=-135, elev=35)
 
@@ -154,6 +157,7 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
     fig3D.savefig(fig3DPath)
     webPrintOut = textile.textile(webPrintOut, html_type="xhtml")
     ws.send(text_data=json.dumps({
+        'end': end,
         'figDiv': figDiv,
         'figScript': figScript,
         'webPrintOut': webPrintOut,
@@ -245,6 +249,7 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
         script = sp[1].split('</script>')
         figScript = script[0]
 
+
         path = "%s\\sim\\static\\results\\%i" % (workingDir, int(ws.room_name))
         if os.path.isdir(path) is False:
             os.mkdir(path)
@@ -252,6 +257,7 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
         fig3D.savefig(fig3DPath)
         webPrintOut = textile.textile(webPrintOut, html_type="xhtml")
         ws.send(text_data=json.dumps({
+            'end': end,
             'figDiv': figDiv,
             'figScript': figScript,
             'webPrintOut': webPrintOut,
@@ -292,6 +298,11 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
             maxFrame.solve(weightMultiplier)
             maxFrame.plot(finalDisplacementScaling, figPath)
         plt.close(fig)
+
+        end = "true"
+        ws.send(text_data=json.dumps({
+            'end': end,
+        }))
 
     consoleOutput.close()
 

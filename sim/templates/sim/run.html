@@ -3,6 +3,21 @@
 
 {% block content %}
 <!-- chat/templates/chat/room.html -->
+<div id="simComplete" class="center green-wrap">
+    <h2>Simulation Complete
+        <i class="fas fa-chevron-right"></i>
+        <i class="fas fa-chevron-right"></i>
+        <i class="fas fa-chevron-right"></i>
+    </h2>
+    <h3 class="links">
+        <a href="">Create Model from Optimized Frame</a>
+        <a href="">Show Create Frame File</a>
+        <a href="">Another Options?</a>
+    </h3>
+</div>
+<div id="finishButtons">
+
+</div>
 <div id="wrapper" class="sim-grid-container">
     <div id="plots" class="sim-grid-item"></div>
     <div id="plot3D" class="sim-grid-item"></div>
@@ -10,7 +25,7 @@
         <div class="blackout">
             <h2>
             Time to completion:<br>
-                <span id="green-wrap">~ <span id="timeLeft"></span> minutes</span>
+                <span class="green-wrap">~ <span id="timeLeft"></span> minutes</span>
             </h2>
         </div>
         <div id="consoleOutput" class="blackout"></div>
@@ -26,27 +41,32 @@
 
     simSocket.onmessage = function(e) {
         var data = JSON.parse(e.data);
-        var figDiv = data['figDiv'];
-        document.getElementById('plots').innerHTML = figDiv;
-        scr = document.createElement('script');
-        scr.innerHTML = data['figScript'];
-        scr.id = "scr";
-        var wrapper = document.getElementById('wrapper');
-        if (wrapper.lastChild.id == 'scr') {
-            wrapper.removeChild(document.getElementById('scr'));
-        }
-        document.getElementById('wrapper').appendChild(scr);
+        if (data['end'] == 'false') {
+            var figDiv = data['figDiv'];
+            document.getElementById('plots').innerHTML = figDiv;
+            scr = document.createElement('script');
+            scr.innerHTML = data['figScript'];
+            scr.id = "scr";
+            var wrapper = document.getElementById('wrapper');
+            if (wrapper.lastChild.id == 'scr') {
+                wrapper.removeChild(document.getElementById('scr'));
+            }
+            document.getElementById('wrapper').appendChild(scr);
 
-        var imgDiv = document.getElementById('plot3D');
-        if (imgDiv.hasChildNodes()) {
-            imgDiv.removeChild(imgDiv.firstChild);
-        }
-        var img = document.createElement('img');
-        img.src = "{% static '/results/1/fig3D.png' %}";
-        imgDiv.appendChild(img);
+            var imgDiv = document.getElementById('plot3D');
+            if (imgDiv.hasChildNodes()) {
+                imgDiv.removeChild(imgDiv.firstChild);
+            }
+            var img = document.createElement('img');
+            img.src = "{% static '/results/1/fig3D.png' %}";
+            imgDiv.appendChild(img);
 
-        document.getElementById('consoleOutput').innerHTML = data['webPrintOut'];
-        document.getElementById('timeLeft').innerHTML = data['timeLeft'];
+            document.getElementById('consoleOutput').innerHTML = data['webPrintOut'];
+            document.getElementById('timeLeft').innerHTML = data['timeLeft'];
+        } else {
+            document.getElementById('finishButtons').style.display = 'flex';
+            document.getElementById('simComplete').style.display = 'block';
+        }
     };
 
     simSocket.onclose = function(e) {
