@@ -30,6 +30,7 @@ def loaded(request, id):
 @csrf_exempt #You need to get rid of this eventually
 def run(request, id):
 
+
     sim = Sim.objects.get(pk=id)
     sim.numGens = int(request.POST.get('numGens'))
     sim.numSeeds = int(request.POST.get('numSeeds'))

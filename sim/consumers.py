@@ -5,6 +5,8 @@ from channels.generic.websocket import WebsocketConsumer
 import json
 from sim.geneticOptimizer import geneticOptimizer
 from sim.models import *
+from FrameWebSim.settings import BASE_DIR
+import os
 
 class SimConsumer(WebsocketConsumer):
     def connect(self):
@@ -22,8 +24,17 @@ class SimConsumer(WebsocketConsumer):
         self.runSim()
 
     def runSim(self):
+        model = FrameModel.objects.get(pk=1)
+        loadfile = model.load
+        createFrame = open(os.path.join(BASE_DIR, loadfile), 'r')
+
         sim = Sim.objects.get(pk=1)
-        geneticOptimizer(self, sim.numGens, sim.numSeeds, sim.numChildrenPerSeed,
+
+        modelID = sim.fromModel_id
+        print(modelID)
+        loadfile = FrameModel.objects.get(pk=modelID).load
+
+        geneticOptimizer(self, createFrame, sim.numGens, sim.numSeeds, sim.numChildrenPerSeed,
                          sim.maxNumRandNodes, sim.maxNumRandTubes, sim.weightMultiplier,
                          sim.maxDispOfAnyTargetNode, sim.maxAvgDisp, sim.maxWeight)
 

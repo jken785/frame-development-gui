@@ -22,14 +22,9 @@ webPrintOut = ""
 timeLeft = ""
 
 
-def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRandNodes, maxNumRandTubes, weightMultiplier, maxDispOfAnyTargetNode, maxAvgDisp, maxWeight):
+def geneticOptimizer(ws, create, numGenerations, numSeeds, numChildrenPerSeed, maxNumRandNodes, maxNumRandTubes, weightMultiplier, maxDispOfAnyTargetNode, maxAvgDisp, maxWeight):
     global webPrintOut
     global timeLeft
-    # Important Sim Parameters
-    # ----------------------------
-
-    useOriginalBaseFrame = True
-    # ----------------------------
 
     # Plotting parameters
     # ----------------------------
@@ -76,10 +71,6 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
     printFile("Maximum average displacement allowed for all target nodes: %.5f inches" % maxAvgDisp)
     printFile("Maximum weight allowed: %.3f pounds" % maxWeight)
     printFile("\nFrame mass is weighted at %f in the objective function" % weightMultiplier)
-    if useOriginalBaseFrame:
-        printFile("\nUsing createBaseFrame() to construct the initial seeds")
-    else:
-        printFile("\nUsing createFrame() to construct the initial seeds")
 
     def sortingKey(elem):
         return elem[0]
@@ -121,10 +112,7 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
     weights = []
     averageDisps = []
     iterations = []
-    if useOriginalBaseFrame:
-        baseFrame = createBaseFrame()
-    else:
-        baseFrame = createFrame()
+    baseFrame = createFrame(create)
     baseFrameScorePerWeight, dispList, baseFrameAvgDisp = baseFrame.solveAllLoadCases(weightMultiplier)
     printOut("\nBase Frame Weight: %.3f" % baseFrame.weight)
     printOut("Base Frame Score: %.3f" % baseFrameScorePerWeight)
@@ -158,11 +146,15 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
     path = "%s\\sim\\static\\results\\%i" % (workingDir, int(ws.room_name))
     if os.path.isdir(path) is False:
         os.mkdir(path)
-    fig3DPath = path + "\\fig3D.png"
+    imgPath = path + "\\images"
+    if os.path.isdir(imgPath) is False:
+        os.mkdir(imgPath)
+    fig3DPath = path + "\\images\\fig3D-%i.png" % 0
     fig3D.savefig(fig3DPath, pad_inches=0)
     webPrintOut = textile.textile(webPrintOut, html_type="xhtml")
     ws.send(text_data=json.dumps({
         'end': end,
+        'iter': '0',
         'figDiv': figDiv,
         'figScript': figScript,
         'webPrintOut': webPrintOut,
@@ -258,11 +250,12 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
         path = "%s\\sim\\static\\results\\%i" % (workingDir, int(ws.room_name))
         if os.path.isdir(path) is False:
             os.mkdir(path)
-        fig3DPath = path + "\\fig3D.png"
+        fig3DPath = path + "\\images\\fig3D-%i.png" % gen
         fig3D.savefig(fig3DPath, pad_inches=0)
         webPrintOut = textile.textile(webPrintOut, html_type="xhtml")
         ws.send(text_data=json.dumps({
             'end': end,
+            'iter': str(gen),
             'figDiv': figDiv,
             'figScript': figScript,
             'webPrintOut': webPrintOut,

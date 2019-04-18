@@ -19,7 +19,9 @@
 
 </div>
 <div id="wrapper" class="sim-grid-container">
-    <div id="plot3D" class="sim-grid-item"></div>
+    <div id="plot3D" class="sim-grid-item centerText">
+
+    </div>
     <div class="sim-grid-item" id="output">
         <div class="blackout" id="timeLeftDiv">
             <h2>
@@ -56,12 +58,11 @@
             document.getElementById('wrapper').appendChild(scr);
 
             var imgDiv = document.getElementById('plot3D');
-            if (imgDiv.hasChildNodes()) {
-                imgDiv.removeChild(imgDiv.firstChild);
-            }
+            imgDiv.innerHTML = "<h2>Best Frame So Far: </h2>";
             var img = document.createElement('img');
             img.className = "plot3DImage";
-            img.src = "{% static '/results/1/fig3D.png' %}";
+            var path = '1/images/fig3D-' + data['iter'] + '.png';
+            img.src = "{% static '/results/' %}"+path;
             imgDiv.appendChild(img);
 
             document.getElementById('consoleOutput').innerHTML = data['webPrintOut'];
