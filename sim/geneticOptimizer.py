@@ -81,8 +81,9 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
     start = time.time()
 
     # Set up graphs (change size of figure's window using the first line below)
+    plt.tight_layout()
     fig = plt.figure(figsize=(6,7))
-    grid = plt.GridSpec(6, 1, hspace=0.8, wspace=0.2)
+    grid = plt.GridSpec(6, 1, hspace=1.2)
     ax1 = fig.add_subplot(grid[0:2, :], title="Score/Weight vs Generations")
     ax1.set_ylabel('Objective Function Score')
     ax2 = fig.add_subplot(grid[2:4, :], title="Avg Displacement vs Generations")
@@ -90,13 +91,19 @@ def geneticOptimizer(ws, numGenerations, numSeeds, numChildrenPerSeed, maxNumRan
     ax3 = fig.add_subplot(grid[4:6, :], title="Weight vs Generations")
     ax3.set_ylabel('Pounds')
 
-    fig3D = plt.figure(figsize=(4,7))
-    ax4 = fig3D.add_subplot(1, 1, 1, title="Maximum Frame", projection='3d')
+    fig3D = plt.figure(figsize=(7,7), dpi=300)
+    ax4 = fig3D.add_subplot(1, 1, 1, projection='3d')
     ax4.view_init(azim=-135, elev=35)
 
     ax1.grid()
     ax2.grid()
     ax3.grid()
+    ax4.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+    ax4.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+    ax4.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+    ax4.xaxis._axinfo["grid"]['color'] = (1, 1, 1, 0)
+    ax4.yaxis._axinfo["grid"]['color'] = (1, 1, 1, 0)
+    ax4.zaxis._axinfo["grid"]['color'] = (1, 1, 1, 0)
 
     # Initialize variables
     maxScorePerWeight = 0

@@ -3,17 +3,17 @@
 
 {% block content %}
 <!-- chat/templates/chat/room.html -->
-<div id="wrapper" class="grid-container">
-    <div id="plots" class="grid-item"></div>
-    <div id="plot3D" class="grid-item"></div>
-    <div class="grid-item">
-        <div>
+<div id="wrapper" class="sim-grid-container">
+    <div id="plots" class="sim-grid-item"></div>
+    <div id="plot3D" class="sim-grid-item"></div>
+    <div class="sim-grid-item">
+        <div class="blackout">
             <h2>
-            Time to completion:
-            ~ <span id="timeLeft"></span> minutes
+            Time to completion:<br>
+                <span id="green-wrap">~ <span id="timeLeft"></span> minutes</span>
             </h2>
         </div>
-        <div id="consoleOutput"></div>
+        <div id="consoleOutput" class="blackout"></div>
     </div>
 </div>
 

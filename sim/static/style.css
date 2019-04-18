@@ -1,8 +1,12 @@
+html {
+    width: 100%;
+}
+
 body {
       width: 100%;
       margin: auto auto;
       font-family: 'Poppins', sans-serif;
-    }
+}
 
 header {
     top: -10px;
@@ -35,6 +39,13 @@ header {
     margin: auto auto;
 }
 
+.sim-grid-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    width: 95%;
+    margin: auto auto;
+}
+
 .grid-item {
     padding: 10px;
     border-style: solid;
@@ -45,8 +56,37 @@ header {
     max-width: 1fr;
 }
 
+.sim-grid-item {
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px;
+    max-width: 1fr;
+    overflow: hidden;
+    object-fit: contain !important;
+}
+
+.blackout {
+    background-color: #333333;
+    color: #FAFAFA;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.blackout#consoleOutput {
+    margin-top: 20px;
+    max-height: 600px;
+}
+
+#green-wrap {
+    color: #00e50a;
+}
+
+#plot3D {
+    width: 100%;
+}
+
 .console-output {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .graph-wrapper {

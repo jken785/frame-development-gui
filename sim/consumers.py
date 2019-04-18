@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from channels.generic.websocket import WebsocketConsumer
 import json
 from sim.geneticOptimizer import geneticOptimizer
+from sim.models import *
 
 class SimConsumer(WebsocketConsumer):
     def connect(self):
@@ -21,7 +22,10 @@ class SimConsumer(WebsocketConsumer):
         self.runSim()
 
     def runSim(self):
-        geneticOptimizer(self, 3, 5, 4, 2, 2, .0075, 70, 70, 70)
+        sim = Sim.objects.get(pk=1)
+        geneticOptimizer(self, sim.numGens, sim.numSeeds, sim.numChildrenPerSeed,
+                         sim.maxNumRandNodes, sim.maxNumRandTubes, sim.weightMultiplier,
+                         sim.maxDispOfAnyTargetNode, sim.maxAvgDisp, sim.maxWeight)
 
     def disconnect(self, close_code):
         # Leave room group
