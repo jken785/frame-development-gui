@@ -7,5 +7,4 @@ urlpatterns = [
     url(r'^&', include('userAuth.urls')),
     url(r'^sim/', include('sim.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^chat/', include('chat.urls')),
 ]

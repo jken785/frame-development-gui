@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from sim.models import *
 from django.views.decorators.csrf import csrf_exempt
 from sim.geneticOptimizer import geneticOptimizer
+import os
+from FrameWebSim.settings import BASE_DIR
+
 
 def main(request):
     sim = Sim.objects.get(pk=1)
@@ -17,20 +20,21 @@ def main(request):
     args = {'consOut': consOut, 'graphs': graphs, 'plot3DPath': plot3DPath}
     return render(request, 'sim/mostRecentSim.html', args)
 
+
 def load(request):
     models = FrameModel.objects.all()
     args = {'models': models}
     return render(request, 'sim/load.html', args)
+
 
 def loaded(request, id):
     model = FrameModel.objects.get(pk=id)
     args = {'id': id}
     return render(request, 'sim/loaded.html', args)
 
+
 @csrf_exempt #You need to get rid of this eventually
 def run(request, id):
-
-
     sim = Sim.objects.get(pk=id)
     sim.numGens = int(request.POST.get('numGens'))
     sim.numSeeds = int(request.POST.get('numSeeds'))
@@ -42,6 +46,31 @@ def run(request, id):
     sim.maxAvgDisp = float(request.POST.get('maxAvgDisp'))
     sim.maxWeight = float(request.POST.get('maxWeight'))
     sim.save()
-
     args = { 'id': id }
     return render(request, 'sim/run.html', args)
+
+
+@csrf_exempt #You need to get rid of this eventually
+def create(request):
+    return render(request, 'sim/create.html')
+
+
+@csrf_exempt #You need to get rid of this eventually
+def createNew(request):
+    newModel = FrameModel(name=request.POST.get('name'))
+    newModel.save()
+    path = '/sim/edit/%i/' % newModel.id
+    loadPath = 'sim\static\models\%i\loadModel.txt' % newModel.id
+    dirPath = os.path.join(BASE_DIR, ("sim\static\models\%i" % newModel.id))
+    os.mkdir(dirPath)
+    createFrame = open(os.path.join(BASE_DIR, loadPath), 'w+')
+    createFrame.close()
+    newModel.load = loadPath
+    newModel.save()
+    return redirect(path)
+
+
+@csrf_exempt #You need to get rid of this eventually
+def edit(request, id):
+    args = { 'id': id }
+    return render(request, 'sim/edit.html', args)
