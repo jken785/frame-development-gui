@@ -71,6 +71,14 @@ def createNew(request):
 
 
 @csrf_exempt #You need to get rid of this eventually
-def edit(request, id):
+def editModel(request, id):
     args = { 'id': id }
-    return render(request, 'sim/edit.html', args)
+    return render(request, 'sim/editModel.html', args)
+
+def editLoadcases(request, id):
+    args = { 'id': id }
+    return render(request, 'sim/editLoadcases.html', args)
+
+def save(request, id):
+    args = { 'id': id }
+    return render(request, 'sim/loaded.html', args)

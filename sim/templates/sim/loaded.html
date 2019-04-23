@@ -4,10 +4,10 @@
 {% block content %}
 <div class="center width50">
     <h3 class="normal">From here you can edit the model or run a simulation:</h3>
-    <form action="/sim/editLoads/{{ id }}/">
+    <form action="/sim/editLoadcases/{{ id }}/">
         <input type="submit" value="Edit Loadcases"/>
     </form>
-    <form action="/sim/editModel/{{ id }}/">
+    <form action="/sim/edit/{{ id }}/" method="POST">
         <input type="submit" value="Edit Model"/>
     </form>
     <form action="/sim/viewResults/{{ id }}/">

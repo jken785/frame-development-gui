@@ -1,0 +1,55 @@
+{% extends 'sim/base.html' %}
+{% load static %}
+
+{% block content %}
+<div id="edit-flexbox" class="center width50">
+    <form action="/sim/editModel/{{ id }}">
+        <input type="submit" value="Edit Model">
+    </form>
+    <form action="/sim/save/{{ id }}">
+        <input type="submit" value="Done">
+    </form>
+</div>
+
+<div class="grid-container center width50">
+    <div class="grid-item">
+        <h3 class="normal">Existing Loadcases:</h3>
+        Add list from DB (use models template as ex.)
+    </div>
+    <div class="grid-item">
+        <form action="/sim/saveLoadcase/" method="POST">
+            <h3 class="normal">Nodes</h3>
+            Loadcase Name: <input type="text" name="name" required/><hr>
+            Force:<br>
+            Describe Force: <input type="text" name="forceCase" required/><hr>
+            X: <input type="number" step="any" name="x" required/><br>
+            Y: <input type="number" step="any" name="y" required/><br>
+            Z: <input type="number" step="any" name="z" required/><br>
+            X Moment: <input type="number" step="any" name="xMom" required/><br>
+            Y Moment: <input type="number" step="any" name="yMom" required/><br>
+            Z Moment: <input type="number" step="any" name="zMom" required/><br>
+            Nodes Affected: <input type="text" name="nodesAffected" placeholder="Comma-delineated list" required/><hr>
+
+            Fixed Nodes:<br>
+            <input type="text" name="fixedNodes" placeholder="Comma-delineated list"/><br>
+
+            Nodes used in Objective Function:<br>
+            <input type="text" name="objFuncNodes" placeholder="Comma-delineated list"/><br>
+
+            Weight of this loadcase in Objective Function:<br>
+            <input type="number" step="any" name="objFuncWeight" required/><br>
+
+
+            <input type="submit" value="Save"/>
+        </form>
+        <form class="delete" action="/sim/deleteNode" method="POST">
+            <input type="submit" value="Delete a Node"/>
+        </form>
+    </div>
+    <div class="grid-item">
+        <h3>Get frame's toString()</h3>
+    </div>
+</div>
+
+
+{% endblock %}

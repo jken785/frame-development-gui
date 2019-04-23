@@ -82,6 +82,15 @@ input[type=submit]:hover {
     margin-top: 110px;
 }
 
+#edit-flexbox {
+    display: flex;
+    justify-content: space-around;
+}
+
+.delete {
+    margin-top: 30px;
+}
+
 .grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
