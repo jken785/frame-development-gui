@@ -24,6 +24,42 @@ def main(request):
     return render(request, 'sim/base.html')
 
 @login_required(login_url="/login/")
+def showCreateFrame(request, id):
+    import textile
+    file = open(os.path.join(BASE_DIR, ('sim\static\\results\%i\createFrame.txt' % id)), 'r')
+    createString = textile.textile(file.read())
+    args = { 'createFrame': createString, 'id':id }
+    return render(request, 'sim/createFrame.html', args)
+
+@login_required(login_url="/login/")
+def createModelFromSim(request, id):
+    args = { 'id': id }
+    return render(request, 'sim/createFromSim.html', args)
+
+@login_required(login_url="/login/")
+def createModelFromSimBackend(request, id):
+    newModel = FrameModel(name=request.POST.get('name'), author_id=request.user.id)
+    newModel.save()
+    loadPath = 'sim\static\models\%i\loadModel.txt' % newModel.id
+    dirPath = os.path.join(BASE_DIR, ("sim\static\models\%i" % newModel.id))
+    os.mkdir(dirPath)
+    createFrame = open(os.path.join(BASE_DIR, loadPath), 'w+')
+    simCreateFrame = open(os.path.join(BASE_DIR, ('sim\static\\results\%i\createFrame.txt' % id)), 'r')
+    createFrame.write(simCreateFrame.read())
+    simCreateFrame.close()
+    createFrame.close()
+    loadcases = open(os.path.join(BASE_DIR, ('sim\static\models\%i\loadcases.txt' % newModel.id)), 'w+')
+    fromID = Sim.objects.get(pk=id).fromModel.id
+    simLoadcases = open(os.path.join(BASE_DIR, ('sim\static\models\%i\loadcases.txt' % fromID)), 'r')
+    loadcases.write(simLoadcases.read())
+    loadcases.close()
+    simLoadcases.close()
+    newModel.createFrame = loadPath
+    newModel.save()
+    path = '/sim/load/%i/' % newModel.id
+    return redirect(path)
+
+@login_required(login_url="/login/")
 def load(request):
     models = FrameModel.objects.filter(author=request.user.id)
     args = {'models': models}

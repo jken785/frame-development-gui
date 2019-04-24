@@ -205,6 +205,10 @@ input[type=submit]:hover {
     color: #00e50a;
 }
 
+.marginLeft {
+    margin-left: 100px;
+}
+
 #simComplete {
     display: none;
     align-items: center;

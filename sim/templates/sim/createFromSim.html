@@ -1,0 +1,15 @@
+{% extends 'sim/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="center width50">
+    <form action="/sim/createModelFromSimBackend/{{ id }}" method="POST">
+        {% csrf_token %}
+
+        <h3>Give it a name: <input type="text" name="name"/> </h3>
+        <input type="submit" value="Create"/>
+    </form>
+</div>
+
+
+{% endblock %}

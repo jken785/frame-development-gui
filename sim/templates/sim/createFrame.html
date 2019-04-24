@@ -1,0 +1,13 @@
+{% extends 'sim/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="center marginLeft">
+    <form action="/sim/view/{{ id }}">
+         <input type="submit" value="Back"/>
+    </form>
+    <h3 class="normal">Create Frame Output:</h3>
+    {{ createFrame|safe }}
+</div>
+
+ {% endblock %}

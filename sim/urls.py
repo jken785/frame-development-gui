@@ -19,5 +19,8 @@ urlpatterns = [
     path('deleteNode/<int:id>/<str:name>/', views.removeNode),
     path('deleteTube/<int:id>/<str:nodeFrom>/<str:nodeTo>/', views.removeTube),
     path('listResults/<int:id>/', views.listResults),
-    path('view/<int:id>', views.viewResults)
+    path('view/<int:id>', views.viewResults),
+    path('createModelFromSim/<int:id>/', views.createModelFromSim),
+    path('createModelFromSimBackend/<int:id>', views.createModelFromSimBackend),
+    path('showCreateFrame/<int:id>/', views.showCreateFrame)
 ]
