@@ -27,6 +27,16 @@ i#first {
     z-index: -100;
 }
 
+.plotFinal3DImage {
+    position: relative;
+    top: -275px;
+    z-index: -100;
+}
+
+#finalGraphOut {
+    margin-top: 50px;
+}
+
 #timeLeftDiv {
     text-align: center;
 }
@@ -48,6 +58,24 @@ header {
 
 .deleteBtn {
     display: inline !important;
+}
+
+#tubeList {
+    font-size: 15px;
+}
+
+input {
+    border-style: solid;
+    border-widt: 1px;
+    border-radius: 3px;
+    height: 25px;
+    outline: none;
+    font-size: 15px;
+    background-color: #EEEEEE;
+}
+
+input:focus {
+    background-color: #FFFFFF;
 }
 
 .noBreak {
@@ -119,6 +147,13 @@ input[type=submit]:hover {
     overflow-x: hidden;
 }
 
+
+.scrollSmall {
+    height: 450px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .sim-grid-container {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -172,6 +207,12 @@ input[type=submit]:hover {
 
 #simComplete {
     display: none;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+#simResultBtns {
+    display: block;
     align-items: center;
     margin-bottom: 30px;
 }

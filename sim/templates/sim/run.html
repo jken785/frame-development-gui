@@ -10,9 +10,9 @@
         <i class="fas fa-chevron-right"></i>
     </h2>
     <h3 class="links">
-        <a href="">Create Model from Optimized Frame</a>
-        <a href="">Show Create Frame File</a>
-        <a href="">Another Options?</a>
+        <a href="/sim/createModelFromSim/{{ sim.id }}/">Create Model from Optimized Frame</a>
+        <a href="/sim/showCreateFrame/{{ sim.id }}/">Show Create Frame File</a>
+        <a href="/sim/load/{{ modelID }}">Run Another</a>
     </h3>
 </div>
 <div id="finishButtons">
@@ -61,7 +61,7 @@
             imgDiv.innerHTML = "<h2>Best Frame So Far: </h2>";
             var img = document.createElement('img');
             img.className = "plot3DImage";
-            var path = '1/images/fig3D-' + data['iter'] + '.png';
+            var path = simID + '/images/fig3D-' + data['iter'] + '.png';
             img.src = "{% static '/results/' %}"+path;
             imgDiv.appendChild(img);
 

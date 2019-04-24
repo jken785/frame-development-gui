@@ -1,0 +1,44 @@
+{% extends 'sim/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- chat/templates/chat/room.html -->
+<div id="simResultBtns" class="center centerText green-wrap">
+    <h2>Simulation Results
+        <i class="fas fa-chevron-right" id="first"></i>
+        <i class="fas fa-chevron-right"></i>
+        <i class="fas fa-chevron-right"></i>
+    </h2>
+    <h3 class="links">
+        <a href="/sim/createModelFromSim/{{ sim.id }}/">Create Model from Optimized Frame</a>
+        <a href="/sim/showCreateFrame/{{ sim.id }}/">Show Create Frame File</a>
+        <a href="/sim/listResults/{{ sim.fromModel.id }}/">Back</a>
+    </h3>
+</div>
+<div id="finishButtons">
+
+</div>
+<div id="wrapper" class="sim-grid-container">
+    <div id="plot3D" class="sim-grid-item centerText">
+        <img id="finalPlot3D" class="plotFinal3DImage" src="">
+    </div>
+    <div class="sim-grid-item" id="output">
+        <div class="scrollSmall blackout">
+            {{ consOut|safe }}
+        </div>
+    </div>
+</div>
+<div id="plots">
+    <img id="finalGraphOut" src="">
+</div>
+
+<script>
+    var path = '{{ sim.id }}/graph.png';
+    document.getElementById('finalGraphOut').src = "{% static '/results/' %}"+path;
+
+    path = '{{ sim.id }}/plot.png';
+    document.getElementById('finalPlot3D').src = "{% static '/results/' %}"+path;
+
+</script>
+
+{% endblock %}

@@ -7,7 +7,7 @@
         <input type="submit" value="Edit Model">
     </form>
     <form action="/sim/save/{{ id }}/">
-        <input type="submit" value="Save">
+        <input type="submit" value="Done">
     </form>
 </div>
 
@@ -32,6 +32,7 @@
     </div>
     <div class="grid-item">
         <form action="/sim/saveLoadcase/{{ id }}/" method="POST">
+            {% csrf_token %}
             <h3 class="normal">Loadcase</h3>
             Name: <input type="text" name="name" placeholder="ONE WORD ONLY" required/><hr>
             Force:<br>

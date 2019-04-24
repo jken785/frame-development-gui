@@ -1,18 +1,18 @@
 class LoadCases:
-	class Test:
-		name = "Test"
-		force = [20.000000, 30.000000, 40.000000, 0.000000, 0.000000, 0.000000]
-		nodesForce = [3,2,4, force]
+	class lotsOnBulkhead:
+		name = "lotsOnBulkhead"
+		force = [100.000000, 100.000000, 100.000000, 0.000000, 0.000000, 0.000000]
+		nodesForce = [0, force]
 		nodeForceCases = [nodesForce]
-		fixedNodes = [6,7,8]
-		objFuncNodes = [1,2]
-		objFuncWeight = 0.065000
-	class testingAgain:
-		name = "testingAgain"
-		force = [3.000000, 3.000000, 3.000000, 3.000000, 3.000000, 3.000000]
-		nodesForce = [3,4,5,6,7, force]
+		fixedNodes = [38, 39, 40, 41]
+		objFuncNodes = [0, 1]
+		objFuncWeight = 1.000000
+	class downOnPyramid:
+		name = "downOnPyramid"
+		force = [0.000000, 0.000000, -200.000000, 0.000000, 0.000000, 0.000000]
+		nodesForce = [52, force]
 		nodeForceCases = [nodesForce]
-		fixedNodes = [8]
-		objFuncNodes = [9]
-		objFuncWeight = 0.700000
-	listLoadCases = [testingAgain,Test]
+		fixedNodes = [40, 41, 44, 45]
+		objFuncNodes = [52]
+		objFuncWeight = 1.200000
+	listLoadCases = [downOnPyramid,lotsOnBulkhead]

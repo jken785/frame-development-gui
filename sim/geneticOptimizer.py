@@ -35,13 +35,10 @@ def geneticOptimizer(ws, create, numGenerations, numSeeds, numChildrenPerSeed, m
 
     currentDateTime = datetime.datetime.now()
     workingDir = os.getcwd()
-    path = "%s\\media" % workingDir
-    if os.path.isdir(path) is False:
-        os.mkdir(path)
-    timestamp = currentDateTime.strftime("%Y-%m-%d %Hh %Mm %Ss")
-    simFolderPath = "%s\\media\\%s" % (workingDir, timestamp)
-    os.mkdir(simFolderPath)
-    consOutPath = "%s\\consoleOuput.txt" % simFolderPath
+    simFolderPath = "%s\\sim\\static\\results\\%i" % (workingDir, int(ws.room_name))
+    if os.path.isdir(simFolderPath) is False:
+        os.mkdir(simFolderPath)
+    consOutPath = "%s\\consoleOutput.txt" % simFolderPath
     consoleOutput = open(consOutPath, "w")
 
     def timeRemaining(left):
@@ -268,7 +265,7 @@ def geneticOptimizer(ws, create, numGenerations, numSeeds, numChildrenPerSeed, m
     ax2.plot(iterations, averageDisps)
     ax3.plot(iterations, weights)
     maxFrame.plotAni(ax4)
-    maxFrame.toTextFile(simFolderPath)
+    maxFrame.toTextFile(simFolderPath+"\createFrame.txt")
 
     if not errorFlag:
         printOut("\n--FINISHED--")
@@ -306,4 +303,29 @@ def geneticOptimizer(ws, create, numGenerations, numSeeds, numChildrenPerSeed, m
 
     consoleOutput.close()
 
+    import smtplib, ssl
+    smtp_server = "smtp.gmail.com"
+    port = 587  # For starttls
+    sender_email = "jake.kendrick@gmail.com"
+    password = 'vasope52niby'
+
+    # Create a secure SSL context
+    context = ssl.create_default_context()
+
+    # Try to log in to server and send email
+    try:
+        server = smtplib.SMTP(smtp_server, port)
+        server.ehlo()  # Can be omitted
+        server.starttls(context=context)  # Secure the connection
+        server.ehlo()  # Can be omitted
+        server.login(sender_email, password)
+        sender_email = "jake.kendrick@gmail.com"
+        receiver_email = "jake.kendrick@gmail.com"
+        message = "Frame Simulation Complete!"
+        server.sendmail(sender_email, receiver_email, message)
+    except Exception as e:
+        # Print any error messages to stdout
+        print(e)
+    finally:
+        server.quit()
 

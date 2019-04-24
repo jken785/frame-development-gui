@@ -5,37 +5,44 @@ from sim.geneticOptimizer import geneticOptimizer
 import os
 from FrameWebSim.settings import BASE_DIR
 from sim.frameToString import *
+from django.contrib.auth.decorators import login_required
 
+
+@login_required(login_url="/login/")
 def main(request):
-    sim = Sim.objects.get(pk=1)
-    consOutPath = sim.consoleOutput
-    consOutFile = open('sim/static/results/'+consOutPath, 'r')
-    consOut = consOutFile.read()
+    # sim = Sim.objects.get(pk=1)
+    # consOutPath = sim.consoleOutput
+    # consOutFile = open('sim/static/results/'+consOutPath, 'r')
+    # consOut = consOutFile.read()
+    #
+    # graphsPath = sim.graphOutput
+    # graphsFile = open('sim/static/results/'+graphsPath, 'r')
+    # graphs = graphsFile.read()
+    #
+    # plot3DPath = "results/" + sim.plot3DPath
+    # args = {'consOut': consOut, 'graphs': graphs, 'plot3DPath': plot3DPath}
+    return render(request, 'sim/base.html')
 
-    graphsPath = sim.graphOutput
-    graphsFile = open('sim/static/results/'+graphsPath, 'r')
-    graphs = graphsFile.read()
-
-    plot3DPath = "results/" + sim.plot3DPath
-    args = {'consOut': consOut, 'graphs': graphs, 'plot3DPath': plot3DPath}
-    return render(request, 'sim/mostRecentSim.html', args)
-
-
+@login_required(login_url="/login/")
 def load(request):
-    models = FrameModel.objects.all()
+    models = FrameModel.objects.filter(author=request.user.id)
     args = {'models': models}
     return render(request, 'sim/load.html', args)
 
-
+@login_required(login_url="/login/")
 def loaded(request, id):
     model = FrameModel.objects.get(pk=id)
     args = {'id': id}
     return render(request, 'sim/loaded.html', args)
 
-
-@csrf_exempt #You need to get rid of this eventually
+@login_required(login_url="/login/")
 def run(request, id):
-    sim = Sim.objects.get(pk=id)
+    sim = Sim(runBy_id=request.user.id)
+    sim.save()
+    sim.fromModel_id = id
+    sim.consoleOutput = "sim/static/results/%s/consoleOutput.txt" % sim.id
+    sim.startingFrame = "sim/static/models/%s/loadModel.txt" % sim.fromModel_id
+    sim.graphOutput = "sim/static/results/%s/graph.png" % sim.id
     sim.numGens = int(request.POST.get('numGens'))
     sim.numSeeds = int(request.POST.get('numSeeds'))
     sim.numChildrenPerSeed = int(request.POST.get('numChildrenPerSeed'))
@@ -46,7 +53,7 @@ def run(request, id):
     sim.maxAvgDisp = float(request.POST.get('maxAvgDisp'))
     sim.maxWeight = float(request.POST.get('maxWeight'))
     sim.save()
-    args = { 'id': id }
+    args = { 'id': sim.id, 'modelID': id }
 
     open(os.path.join(BASE_DIR, ("sim\loadCases.py")), 'w').close()
     loadCaseCode = open(os.path.join(BASE_DIR, ("sim\loadCases.py")), 'w')
@@ -58,7 +65,28 @@ def run(request, id):
 
     return render(request, 'sim/run.html', args)
 
-@csrf_exempt #You need to get rid of this eventually
+@login_required(login_url="/login/")
+def listResults(request, id):
+    sims = Sim.objects.filter(fromModel=id)
+    args = {'sims': sims, 'id':id }
+    return render(request, 'sim/listSims.html', args)
+
+@login_required(login_url="/login/")
+def viewResults(request, id):
+    import textile
+    sim = Sim.objects.get(pk=id)
+    consOutFile = open(os.path.join(BASE_DIR, ("sim\static\\results\%i\consoleOutput.txt" % id)), 'r')
+    consOut = textile.textile(consOutFile.read(), html_type='xhtml')
+
+    createFrameFile = "sim\static\\results\%i\createFrame.txt" % id
+    create = open(os.path.join(BASE_DIR, createFrameFile), 'r')
+    frame = createFrame(create)
+    frame.plotForCreation(os.path.join(BASE_DIR, ("sim\static\\results\%i\plot.png" % id)))
+
+    args = { 'sim': sim, 'consOut': consOut }
+    return render(request, 'sim/viewResults.html', args)
+
+@login_required(login_url="/login/")
 def saveLoadcase(request, id):
     model = FrameModel.objects.get(pk=id)
     prev = ""
@@ -98,6 +126,7 @@ def saveLoadcase(request, id):
     path = '/sim/editLoadcases/%i/' % id
     return redirect(path)
 
+@login_required(login_url="/login/")
 def deleteLoadcase(request, id, name):
     lines = ""
     with open(os.path.join(BASE_DIR, ("sim\static\models\%i\loadcases.txt" % id)), 'r') as f:
@@ -126,18 +155,16 @@ def deleteLoadcase(request, id, name):
     with open(os.path.join(BASE_DIR, ("sim\static\models\%i\loadcases.txt" % id)), 'a') as f:
         f.write('\tlistLoadCases = [%s]\n' % names)
         f.close()
-    print(repr(output))
     path = '/sim/editLoadcases/%i/' % id
     return redirect(path)
 
-@csrf_exempt #You need to get rid of this eventually
+@login_required(login_url="/login/")
 def create(request):
     return render(request, 'sim/create.html')
 
-
-@csrf_exempt #You need to get rid of this eventually
+@login_required(login_url="/login/")
 def createNew(request):
-    newModel = FrameModel(name=request.POST.get('name'))
+    newModel = FrameModel(name=request.POST.get('name'), author_id=request.user.id)
     newModel.save()
     path = '/sim/editModel/%i/' % newModel.id
     loadPath = 'sim\static\models\%i\loadModel.txt' % newModel.id
@@ -149,29 +176,129 @@ def createNew(request):
     newModel.save()
     return redirect(path)
 
-
-@csrf_exempt #You need to get rid of this eventually
+@login_required(login_url="/login/")
 def editModel(request, id):
     model = FrameModel.objects.get(pk=id)
     createFrameFile = model.createFrame
-    create = open(os.path.join(BASE_DIR, createFrameFile), 'r')
-    names = []
-    for line in create:
-        splitArray = line.split('"')
-        names.append(splitArray[1])
-    create.close()
-    create = open(os.path.join(BASE_DIR, createFrameFile), 'r')
-    toString = frameToLongString(create)
-    create.close()
 
-    create = open(os.path.join(BASE_DIR, createFrameFile), 'r')
-    frame = createFrame(create)
-    frame.plotForCreation(os.path.join(BASE_DIR, ("sim\static\models\%i\plot.png" % id)))
+    args = {'id': id }
+    if os.path.getsize(os.path.join(BASE_DIR, createFrameFile)) > 0:
+        create = open(os.path.join(BASE_DIR, createFrameFile), 'r')
+        names = []
+        tubes = []
+        for line in create:
+            if line.startswith("frame.addNode"):
+                splitArray = line.split('"')
+                names.append(splitArray[1])
+            if line.startswith("frame.addTube"):
+                size = line.split("(")[1].split(",")[0]
+                splitArray = line.split('"')
+                nodeFrom = splitArray[1]
+                nodeTo = splitArray[3]
+                tubes.append({ 'size': size, 'nodeFrom': nodeFrom, 'nodeTo': nodeTo })
+        create.close()
+        create = open(os.path.join(BASE_DIR, createFrameFile), 'r')
+        toString = frameToLongString(create)
+        create.close()
 
-    args = { 'id': id, 'nodes': names, 'toString': toString}
+        create = open(os.path.join(BASE_DIR, createFrameFile), 'r')
+        frame = createFrame(create)
+        frame.plotForCreation(os.path.join(BASE_DIR, ("sim\static\models\%i\plot.png" % id)))
+
+        args = { 'id': id, 'nodes': names, 'tubes': tubes, 'toString': toString}
     return render(request, 'sim/editModel.html', args)
 
-@csrf_exempt #You need to get rid of this eventually
+@login_required(login_url="/login/")
+def addNode(request, id):
+    model = FrameModel.objects.get(pk=id)
+    createFrameFile = model.createFrame
+    create = open(os.path.join(BASE_DIR, createFrameFile), 'r')
+    nodeLines = ""
+    tubeLines = ""
+    for line in create:
+        if line.startswith("frame.addNode"):
+            nodeLines += line
+        elif line.startswith("frame.addTube"):
+            tubeLines += line
+    create.close()
+    name = request.POST.get('name')
+    x = request.POST.get('x')
+    y = request.POST.get('y')
+    z = request.POST.get('z')
+    maxXNegDev = request.POST.get('maxXNegDev')
+    maxXPosDev = request.POST.get('maxXPosDev')
+    maxYNegDev = request.POST.get('maxYNegDev')
+    maxYPosDev = request.POST.get('maxYPosDev')
+    maxZNegDev = request.POST.get('maxZNegDev')
+    maxZPosDev = request.POST.get('maxZPosDev')
+    symmetric = request.POST.get('symmetric')
+    required = request.POST.get('required')
+    xGroup = request.POST.get('xGroup')
+    addNode = 'frame.addNode("%s", %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' % (
+        name, x, y, z, symmetric, required, maxXNegDev, maxXPosDev, maxYNegDev,
+        maxYPosDev, maxZNegDev, maxZPosDev
+    )
+    if xGroup is not "":
+        addNode += (', "%s")\n' % xGroup)
+    else:
+        addNode += (')\n')
+    nodeLines += addNode
+
+    newLines = nodeLines + tubeLines
+    create = open(os.path.join(BASE_DIR, createFrameFile), 'w+')
+    create.write(newLines)
+    create.close()
+
+    path = '/sim/editModel/%i/' % id
+    return redirect(path)
+
+@login_required(login_url="/login/")
+def addTube(request, id):
+    model = FrameModel.objects.get(pk=id)
+    createFrameFile = model.createFrame
+    create = open(os.path.join(BASE_DIR, createFrameFile), 'a')
+    size = request.POST.get('size')
+    minSize = request.POST.get('minSize')
+    nodeFrom = request.POST.get('nodeFrom')
+    nodeTo = request.POST.get('nodeTo')
+    symmetric = request.POST.get('symmetric')
+    required = request.POST.get('required')
+    tubeGroup = request.POST.get('tubeGroup')
+    addTube = 'frame.addTube(%s, %s, "%s", "%s", %s, %s' % (
+        size, minSize, nodeFrom, nodeTo, symmetric, required
+    )
+    if tubeGroup is not "":
+        addTube += (', "%s")\n' % tubeGroup)
+    else:
+        addTube += (')\n')
+    create.write(addTube)
+    create.close()
+    path = '/sim/editModel/%i/' % id
+    return redirect(path)
+
+@login_required(login_url="/login/")
+def removeNode(request, id, name):
+    model = FrameModel.objects.get(pk=id)
+    createFrameFile = model.createFrame
+    create = open(os.path.join(BASE_DIR, createFrameFile), 'r')
+    frame = createFrame(create)
+    frame.removeNodeByName(name)
+    frame.toTextFile(os.path.join(BASE_DIR, createFrameFile))
+    path = '/sim/editModel/%i/' % id
+    return redirect(path)
+
+@login_required(login_url="/login/")
+def removeTube(request, id, nodeFrom, nodeTo):
+    model = FrameModel.objects.get(pk=id)
+    createFrameFile = model.createFrame
+    create = open(os.path.join(BASE_DIR, createFrameFile), 'r')
+    frame = createFrame(create)
+    frame.removeTubeByNodes(nodeFrom, nodeTo)
+    frame.toTextFile(os.path.join(BASE_DIR, createFrameFile))
+    path = '/sim/editModel/%i/' % id
+    return redirect(path)
+
+@login_required(login_url="/login/")
 def editLoadcases(request, id):
     model = FrameModel.objects.get(pk=id)
     createFrameFile = model.createFrame
@@ -206,7 +333,7 @@ def editLoadcases(request, id):
 
     return render(request, 'sim/editLoadcases.html', args)
 
-@csrf_exempt #You need to get rid of this eventually
+@login_required(login_url="/login/")
 def save(request, id):
     path = '/sim/load/%i/' % id
     return redirect(path)

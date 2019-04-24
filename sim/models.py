@@ -15,7 +15,7 @@ class FrameModel(models.Model):
 
 
 class Sim(models.Model):
-    load = models.CharField(max_length=255)
+    startingFrame = models.CharField(max_length=255)
     consoleOutput = models.CharField(max_length=255)
     graphOutput = models.CharField(max_length=255)
     plot3DPath = models.CharField(max_length=255)

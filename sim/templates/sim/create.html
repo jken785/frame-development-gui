@@ -4,6 +4,8 @@
 {% block content %}
 <div class="center width50">
     <form action="/sim/createNew/" method="POST">
+        {% csrf_token %}
+
         <h3>Name of New Model: <input type="text" name="name"/> </h3>
         <input type="submit" value="Create"/>
     </form>

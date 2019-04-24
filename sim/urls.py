@@ -13,5 +13,11 @@ urlpatterns = [
     path('editLoadcases/<int:id>/', views.editLoadcases),
     path('save/<int:id>/', views.save),
     path('saveLoadcase/<int:id>/', views.saveLoadcase),
-    path('deleteLoadcase/<int:id>/<str:name>/', views.deleteLoadcase)
+    path('deleteLoadcase/<int:id>/<str:name>/', views.deleteLoadcase),
+    path('addNode/<int:id>/', views.addNode),
+    path('addTube/<int:id>/', views.addTube),
+    path('deleteNode/<int:id>/<str:name>/', views.removeNode),
+    path('deleteTube/<int:id>/<str:nodeFrom>/<str:nodeTo>/', views.removeTube),
+    path('listResults/<int:id>/', views.listResults),
+    path('view/<int:id>', views.viewResults)
 ]

@@ -5,17 +5,21 @@
 <div class="center width50">
     <h3 class="normal">From here you can edit the model or run a simulation:</h3>
     <form action="/sim/editLoadcases/{{ id }}/">
+        {% csrf_token %}
         <input type="submit" value="Edit Loadcases"/>
     </form>
     <form action="/sim/editModel/{{ id }}/" method="POST">
+        {% csrf_token %}
         <input type="submit" value="Edit Model"/>
     </form>
-    <form action="/sim/viewResults/{{ id }}/">
+    <form action="/sim/listResults/{{ id }}/">
+        {% csrf_token %}
         <input type="submit" value="View Sim Results"/>
     </form>
 
 
     <form action="/sim/run/{{ id }}/" method="POST">
+        {% csrf_token %}
         Number of Generations: <input type="number" name="numGens"/><br>
         Number of Surviving Individuals: <input type="number" name="numSeeds"/><br>
         Number of Children per Surviving Individual: <input type="number" name="numChildrenPerSeed"/><br>

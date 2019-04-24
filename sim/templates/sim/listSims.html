@@ -1,0 +1,17 @@
+{% extends 'sim/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="center width50">
+    <h3 class="normal">Simulation Results:</h3>
+    {% for sim in sims %}
+
+    <p><a href="/sim/view/{{ sim.id }}">{{ sim.started }}</a></p>
+
+        {% endfor %}
+    <form action="/sim/load/{{ id }}/">
+         <input type="submit" value="Back"/>
+    </form>
+
+        {% endblock %}
+</div>

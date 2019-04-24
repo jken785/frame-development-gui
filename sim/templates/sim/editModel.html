@@ -7,18 +7,19 @@
         <input type="submit" value="Edit Loadcases">
     </form>
     <form action="/sim/save/{{ id }}">
-        <input type="submit" value="Save">
+        <input type="submit" value="Done">
     </form>
 </div>
 
 <div class="grid-container center width50">
     <div class="grid-item scroll">
         <img id="editPlot" src="">
-        <h4>Full Frame Reference Information:</h4>
+        <h4>Reference Information:</h4>
         <pre>{{ toString|safe }}</pre>
     </div>
     <div class="grid-item scroll">
-        <form action="/sim/addNode/" method="POST">
+        <form action="/sim/addNode/{{ id }}/" method="POST">
+            {% csrf_token %}
             <h3 class="normal">Nodes</h3>
             Name: <input type="text" name="name" required/><hr>
             X Coordinate: <input type="number" step="any" name="x" required/><br>
@@ -34,19 +35,19 @@
                <option value="True">Yes</option>
              </select><hr>
             Maximum deviations from locations:<br>
-            -X <input type="number" step="any" name="maxXNegDev"/>
-            +X <input type="number" step="any" name="maxXPosDev"/><br>
-            -Y <input type="number" step="any" name="maxYNegDev"/>
-            +Y <input type="number" step="any" name="maxYPosDev"/><br>
-            -Z <input type="number" step="any" name="maxZNegDev"/>
-            +Z <input type="number" step="any" name="maxZPosDev"/><hr>
+            -X <input type="number" step="any" name="maxXNegDev" value="0"/>
+            +X <input type="number" step="any" name="maxXPosDev" value="0"/><br>
+            -Y <input type="number" step="any" name="maxYNegDev" value="0"/>
+            +Y <input type="number" step="any" name="maxYPosDev" value="0"/><br>
+            -Z <input type="number" step="any" name="maxZNegDev" value="0"/>
+            +Z <input type="number" step="any" name="maxZPosDev" value="0"/><hr>
             Node Group (move together in X):<br>
-            <input type="text" name="xGroup"/>
+            <input type="text" name="xGroup" value=""/>
             <input type="submit" value="Add Node"/>
         </form><hr>
         {% for name in nodes %}
         {{name}}
-                 <form class="noBreak" action="/sim/deleteNode/{{ id }}/{{ name }}">
+                 <form class="noBreak" action="/sim/deleteNode/{{ id }}/{{ name }}/">
                     <input type="submit" value="Delete">
                  </form><br>
 
@@ -54,8 +55,9 @@
 
 
     </div>
-    <div class="grid-item">
-        <form action="/sim/addTube/" method="POST">
+    <div class="grid-item scroll">
+        <form action="/sim/addTube/{{ id }}/" method="POST">
+            {% csrf_token %}
             <h3 class="normal">Tubes</h3>
             Size:
             <select name="size" required>
@@ -88,23 +90,26 @@
             From Node: <input type="text" name="nodeFrom" required/><br>
             To Node: <input type="text" name="nodeTo" required/><hr>
             Tube is symmetric about y-axis:
-            <select required>
+            <select name="symmetric" required>
                <option value="True">Yes</option>
                <option value="False">No</option>
              </select><br>
             Tube is required (future feature):
-            <select required>
+            <select name="required" required>
                <option value="True">Yes</option>
              </select><hr>
             Tube Group (have same tube size):<br>
-            <input type="text" name="xGroup"/>
+            <input type="text" name="tubeGroup" value=""/>
             <input type="submit" value="Add Tube"/>
-        </form>
-        {% for name in tubes %}
-        {{name}}
-                 <form class="noBreak" action="/sim/deleteTube/{{ id }}/{{ name }}">
+        </form><hr>
+        {% for tube in tubes %}
+        <div id="tubeList">
+        <strong>From:</strong> {{ tube.nodeFrom }}<br>
+            <strong>To</strong> {{ tube.nodeTo }}
+                 <form class="noBreak" action="/sim/deleteTube/{{ id }}/{{ tube.nodeFrom }}/{{ tube.nodeTo }}/">
                     <input type="submit" value="Delete">
-                 </form><br>
+                 </form><br><br>
+        </div>
         {% endfor %}
     </div>
 </div>

@@ -265,6 +265,11 @@ class Frame:
         for node in self.nodes:
             node.updateConnectingTubes()
 
+    def removeNodeByName(self, name):
+        for node in self.nodes:
+            if node.name == name:
+                self.removeNode(self.nodes.index(node))
+
     def addTube(self, size, minSize, nodeFrom, nodeTo, isSymmetric, isRequired, group=None):
         tube = Tube(self, size, minSize, nodeFrom, nodeTo, isSymmetric, isRequired, group)
         self.tubes.append(tube)
@@ -289,6 +294,16 @@ class Frame:
             for node in self.nodes:
                 node.updateConnectingTubes()
             self.getWeight()
+
+    def removeTubeByNodes(self, nodeFrom, nodeTo):
+        for tube in self.tubes:
+            if tube.nodeFrom.name == nodeFrom and tube.nodeTo.name == nodeTo:
+                self.removeTube(self.tubes.index(tube))
+            elif tube.nodeFrom.name == nodeTo and tube.nodeTo.name == nodeFrom:
+                self.removeTube(self.tubes.index(tube))
+            else:
+                print("I couldn't find that tube")
+
 
     def getWeight(self):
         weight = 0
@@ -380,45 +395,44 @@ class Frame:
         plotFrameAni(self, axes, title)
 
     def toTextFile(self, path):
-        createFramePath = "%s\\createMaxFrame.txt" % path
-        createFrameFile = open(createFramePath, "w")
+        createFrameFile = open(path, "w+")
 
         for node in self.nodes:
             if not node.name.endswith("#m"):
                 if node.geometryOptPossible:
                     if node.hasXGroup:
-                        createFrameFile.write("\tframe.addNode('%s',%f, %f, %f, %r, %r, %f, %f, %f, %f, %f, %f, '%s')\n" %
+                        createFrameFile.write('frame.addNode("%s",%f, %f, %f, %r, %r, %f, %f, %f, %f, %f, %f, "%s")\n' %
                                               (node.name, node.x, node.y, node.z, node.isSymmetric, node.isRequired,
                                                node.maxXPosDev, node.maxXNegDev, node.maxYPosDev, node.maxYNegDev,
                                                node.maxZPosDev, node.maxZNegDev, node.xGroup))
                     else:
-                        createFrameFile.write("\tframe.addNode('%s',%f, %f, %f, %r, %r, %f, %f, %f, %f, %f, %f)\n" %
+                        createFrameFile.write('frame.addNode("%s",%f, %f, %f, %r, %r, %f, %f, %f, %f, %f, %f)\n' %
                                               (node.name, node.x, node.y, node.z, node.isSymmetric, node.isRequired,
                                                node.maxXPosDev, node.maxXNegDev, node.maxYPosDev, node.maxYNegDev,
                                                node.maxZPosDev, node.maxZNegDev))
                 else:
-                    createFrameFile.write("\tframe.addNode('%s',%f, %f, %f, %r, %r)\n" %
+                    createFrameFile.write('frame.addNode("%s",%f, %f, %f, %r, %r)\n' %
                                           (node.name, node.x, node.y, node.z, node.isSymmetric, node.isRequired))
         alreadyFoundSymmetricPair = False
         for tube in self.tubes:
             if tube.isSymmetric and alreadyFoundSymmetricPair is False:
                 if tube.group is not None:
-                    createFrameFile.write("\tframe.addTube(%s, %s, '%s', '%s', %r, %r, '%s')\n" %
+                    createFrameFile.write('frame.addTube(%s, %s, "%s", "%s", %r, %r, "%s")\n' %
                                           (tube.size.string, tube.minSize.string, tube.nodeFrom.name, tube.nodeTo.name,
                                            tube.isSymmetric, tube.isRequired, tube.group))
                 else:
-                    createFrameFile.write("\tframe.addTube(%s, %s, '%s', '%s', %r, %r)\n" %
+                    createFrameFile.write('frame.addTube(%s, %s, "%s", "%s", %r, %r)\n' %
                                           (tube.size.string, tube.minSize.string, tube.nodeFrom.name, tube.nodeTo.name,
                                            tube.isSymmetric, tube.isRequired))
 
                 alreadyFoundSymmetricPair = True
             elif not tube.isSymmetric:
                 if tube.group is not None:
-                    createFrameFile.write("\tframe.addTube(%s, %s, '%s', '%s', %r, %r, '%s')\n" %
+                    createFrameFile.write('frame.addTube(%s, %s, "%s", "%s", %r, %r, "%s")\n' %
                                           (tube.size.string, tube.minSize.string, tube.nodeFrom.name, tube.nodeTo.name,
                                            tube.isSymmetric, tube.isRequired, tube.group))
                 else:
-                    createFrameFile.write("\tframe.addTube(%s, %s, '%s', '%s', %r, %r)\n" %
+                    createFrameFile.write('frame.addTube(%s, %s, "%s", "%s", %r, %r)\n' %
                                           (tube.size.string, tube.minSize.string, tube.nodeFrom.name, tube.nodeTo.name,
                                            tube.isSymmetric, tube.isRequired))
             else:
