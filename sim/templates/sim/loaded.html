@@ -7,7 +7,7 @@
     <form action="/sim/editLoadcases/{{ id }}/">
         <input type="submit" value="Edit Loadcases"/>
     </form>
-    <form action="/sim/edit/{{ id }}/" method="POST">
+    <form action="/sim/editModel/{{ id }}/" method="POST">
         <input type="submit" value="Edit Model"/>
     </form>
     <form action="/sim/viewResults/{{ id }}/">
@@ -28,7 +28,7 @@
         <hr>
 
 
-        Maximum Displacement of Any Targetted Node: <input type="number" step="any" name="maxDispOfAnyTargetNode"/><br>
+        Maximum Displacement of Any Targeted Node: <input type="number" step="any" name="maxDispOfAnyTargetNode"/><br>
         Maximum Average Displacement of Target Nodes: <input type="number" step="any" name="maxAvgDisp"/><br>
         Maximum Acceptable Frame Weight: <input type="number" step="any" name="maxWeight"/><br>
 

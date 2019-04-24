@@ -11,5 +11,7 @@ urlpatterns = [
     path('createNew/', views.createNew),
     path('editModel/<int:id>/', views.editModel),
     path('editLoadcases/<int:id>/', views.editLoadcases),
-    path('save/<int: id>/', views.save)
+    path('save/<int:id>/', views.save),
+    path('saveLoadcase/<int:id>/', views.saveLoadcase),
+    path('deleteLoadcase/<int:id>/<str:name>/', views.deleteLoadcase)
 ]

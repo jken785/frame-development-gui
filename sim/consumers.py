@@ -25,14 +25,13 @@ class SimConsumer(WebsocketConsumer):
 
     def runSim(self):
         model = FrameModel.objects.get(pk=1)
-        loadfile = model.load
+        loadfile = model.createFrame
         createFrame = open(os.path.join(BASE_DIR, loadfile), 'r')
 
         sim = Sim.objects.get(pk=1)
 
         modelID = sim.fromModel_id
-        print(modelID)
-        loadfile = FrameModel.objects.get(pk=modelID).load
+        loadfile = FrameModel.objects.get(pk=modelID).createFrame
 
         geneticOptimizer(self, createFrame, sim.numGens, sim.numSeeds, sim.numChildrenPerSeed,
                          sim.maxNumRandNodes, sim.maxNumRandTubes, sim.weightMultiplier,

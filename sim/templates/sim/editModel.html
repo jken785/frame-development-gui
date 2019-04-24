@@ -7,15 +7,17 @@
         <input type="submit" value="Edit Loadcases">
     </form>
     <form action="/sim/save/{{ id }}">
-        <input type="submit" value="Done">
+        <input type="submit" value="Save">
     </form>
 </div>
 
 <div class="grid-container center width50">
-    <div class="grid-item">
-        <h3 class="normal">Add auto-updating 3D plot here</h3>
+    <div class="grid-item scroll">
+        <img id="editPlot" src="">
+        <h4>Full Frame Reference Information:</h4>
+        <pre>{{ toString|safe }}</pre>
     </div>
-    <div class="grid-item">
+    <div class="grid-item scroll">
         <form action="/sim/addNode/" method="POST">
             <h3 class="normal">Nodes</h3>
             Name: <input type="text" name="name" required/><hr>
@@ -41,10 +43,16 @@
             Node Group (move together in X):<br>
             <input type="text" name="xGroup"/>
             <input type="submit" value="Add Node"/>
-        </form>
-        <form class="delete" action="/sim/deleteNode" method="POST">
-            <input type="submit" value="Delete a Node"/>
-        </form>
+        </form><hr>
+        {% for name in nodes %}
+        {{name}}
+                 <form class="noBreak" action="/sim/deleteNode/{{ id }}/{{ name }}">
+                    <input type="submit" value="Delete">
+                 </form><br>
+
+        {% endfor %}
+
+
     </div>
     <div class="grid-item">
         <form action="/sim/addTube/" method="POST">
@@ -90,13 +98,21 @@
              </select><hr>
             Tube Group (have same tube size):<br>
             <input type="text" name="xGroup"/>
-            <input type="submit" value="Add Node"/>
+            <input type="submit" value="Add Tube"/>
         </form>
-        <form class="delete" action="/sim/deleteNode" method="POST">
-            <input type="submit" value="Delete a Tube"/>
-        </form>
+        {% for name in tubes %}
+        {{name}}
+                 <form class="noBreak" action="/sim/deleteTube/{{ id }}/{{ name }}">
+                    <input type="submit" value="Delete">
+                 </form><br>
+        {% endfor %}
     </div>
 </div>
 
+<script>
+    var path = '{{ id }}/plot.png';
+    document.getElementById('editPlot').src = "{% static '/models/' %}"+path;
+
+</script>
 
 {% endblock %}

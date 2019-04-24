@@ -46,6 +46,14 @@ header {
     z-index: 100;
 }
 
+.deleteBtn {
+    display: inline !important;
+}
+
+.noBreak {
+    display: inline;
+}
+
 .center {
     margin: auto auto;
 }
@@ -96,6 +104,19 @@ input[type=submit]:hover {
     grid-template-columns: 1fr 1fr 1fr;
     width: 95%;
     margin: auto auto;
+}
+
+#editPlot {
+    width: 600px;
+    position: relative;
+    right: 40px;
+    bottom: 100px;
+}
+
+.scroll {
+    height: 700px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .sim-grid-container {

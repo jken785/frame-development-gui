@@ -4,7 +4,8 @@ from django.conf import settings
 # Create your models here.
 class FrameModel(models.Model):
     name = models.CharField(max_length=255)
-    load = models.CharField(max_length=255)
+    createFrame = models.CharField(max_length=255)
+    loadCases = models.CharField(max_length=255, null=True)
     created = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,

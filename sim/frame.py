@@ -298,6 +298,13 @@ class Frame:
         return weight
 
     def toString(self, printType=None, long=None):
+        from io import StringIO
+        import sys
+
+        old_stdout = sys.stdout
+        result = StringIO()
+        sys.stdout = result
+
         if printType == "all":
             self._printTubes(long)
             self._printNodes(long)
@@ -305,7 +312,10 @@ class Frame:
             self._printNodes(long)
         if printType == "tubes":
             self._printTubes(long)
-        print("Total Weight:", '%.3f' % self.weight, "lbs")
+
+        sys.stdout = old_stdout
+        return result.getvalue()
+
 
     def _printTubes(self, long):
         print("\nTUBES:", self.tubes.__len__(), "total")
@@ -331,14 +341,20 @@ class Frame:
                 index += 1
 
     def _printNodes(self, long):
-        print("\nNODES:", self.nodes.__len__(), "total")
-        print("----------\n")
         index = 0
         if long is 'long':
             for node in self.nodes:
-                print("#", index, "Name:", node.name, "\tCoordinates:", node.coordsToString())
-                print("\tHas forces:\t\t", node.forcesToString())
-                print("\tWith fixtures:\t", node.fixturesToString())
+                print("No.", index, "\tName:", node.name, "\n\tCoordinates:", node.coordsToString())
+                if node.geometryOptPossible:
+                    print("\tDeviations: (%.3f, %.3f, %.3f, %.3f, %.3f, %.3f)" % (node.maxXNegDev, node.maxXPosDev,
+                                                                  node.maxYNegDev, node.maxYPosDev,
+                                                                  node.maxZNegDev, node.maxZPosDev))
+                else:
+                    print("\tDeviations: (0, 0, 0, 0, 0, 0)")
+                if node.hasXGroup:
+                    print("\tNode Group:", node.xGroup)
+                else:
+                    print("\tNode Group: None")
                 if node.isRequired and node.isSymmetric:
                     print("\tRequired and Symmetric")
                 elif node.isRequired:
@@ -348,15 +364,17 @@ class Frame:
                 print("\tConnects tubes:")
                 for tube in node.tubes:
                     print("\t  ", "Tube No.", self.tubes.index(tube), "-->", tube.toString())
-                print("\n")
                 index += 1
         else:
             for node in self.nodes:
-                print("#", index, "Name:", node.name, "with coordinates:", node.coordsToString())
+                print("<pre>No.", index, "\tName:", node.name, "</pre>")
                 index += 1
 
     def plot(self, displacedScaling, figPath=None):
         plotFrame(self, displacedScaling, figPath)
+
+    def plotForCreation(self, figPath):
+        plotFrameForCreation(self, figPath)
 
     def plotAni(self, axes, title=None):
         plotFrameAni(self, axes, title)

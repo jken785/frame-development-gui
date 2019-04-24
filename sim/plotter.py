@@ -34,6 +34,24 @@ def plotFrame(frame, displacedScaling, figPath=None):
     else:
         plt.show()
 
+def plotFrameForCreation(frame, figPath):
+    fig = plt.figure(figsize=(9, 9))
+    axes = fig.gca(projection='3d')
+    axes.set_aspect('equal')
+    axes.view_init(azim=-135, elev=35)
+    setEqualScaling(frame, axes)
+
+    axes.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+    axes.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+    axes.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+    axes.xaxis._axinfo["grid"]['color'] = (1, 1, 1, 0)
+    axes.yaxis._axinfo["grid"]['color'] = (1, 1, 1, 0)
+    axes.zaxis._axinfo["grid"]['color'] = (1, 1, 1, 0)
+
+    for tube in frame.tubes:
+        plot(tube, axes)
+    fig.savefig(figPath)
+    plt.close(fig)
 
 def plot(tube, axes):
     xStart = tube.nodeFrom.x
